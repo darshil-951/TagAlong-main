@@ -79,9 +79,6 @@ const MyParcelPage: React.FC = () => {
   };
 
   // Handle sending a message
-  
-      
-    
   const handleChatClick = (parcel: Parcel) => {
     if (!currentUser) return;
     
@@ -126,6 +123,21 @@ const MyParcelPage: React.FC = () => {
     
     // Navigate to the messages page
     navigate('/messages');
+  };
+
+  // Add this function to handle payment
+  const handlePaymentClick = (parcel: Parcel) => {
+    // Calculate the amount based on the parcel details
+    // For this example, we'll use a fixed amount of 500
+    const amount = 500;
+    
+    // Navigate to the payment page with the parcel ID and amount
+    navigate('/payment', { 
+      state: { 
+        parcelId: parcel._id,
+        amount: amount
+      } 
+    });
   };
 
   useEffect(() => {
@@ -198,6 +210,7 @@ const MyParcelPage: React.FC = () => {
                       
                       <button
                         className="flex items-center bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded transition-colors mt-2 shadow"
+                        onClick={() => handlePaymentClick(parcel)}
                       >
                         Make Payment
                       </button>

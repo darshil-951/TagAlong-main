@@ -22,6 +22,7 @@ import MyParcelPage from './pages/MyParcelPage';
 import MyTripsPage from './pages/MyTripsPage';
 import Notification  from './pages/Notification';
 import ChatPage from './pages/ChatPage';
+import PaymentPage from './pages/PaymentPage'; // Add this line
 
 
 
@@ -105,6 +106,7 @@ function App() {
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/mytrips" element={<MyTripsPage />} />
               <Route path="/myparcel" element={<MyParcelPage />} />
+              <Route path="/payment" element={<PaymentPage />} /> {/* Add this line */}
               <Route path="/messages" element={<ChatPage />} />
               <Route path="/notifications" element={<Notification />} />
             </Routes>

@@ -12,6 +12,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const Message = require('./models/Message');
 const { decrypt } = require('./utils/encryption');
 const notificationRoutes = require('./routes/notificationRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 require('dotenv').config();
 
@@ -41,6 +42,7 @@ app.use('/api/trip', tripRoutes);
 app.use('/api/parcel', parcelRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/payment', paymentRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Socket.IO connection handling
@@ -225,3 +227,11 @@ io.on('connection', (socket) => {
 
 // Start the server
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Remove these lines (around line 232-235)
+// const paymentRoutes = require('./routes/paymentRoutes');
+// app.use('/api/payment', paymentRoutes);
+
+// Keep only the special handling for Stripe webhook route
+app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
+

@@ -1,0 +1,147 @@
+// Make sure dotenv is loaded before initializing Stripe
+require('dotenv').config();
+
+// Then initialize Stripe with the key from environment variables
+// Add this to debug
+console.log('Stripe key available:', !!process.env.STRIPE_SECRET_KEY);
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Payment = require('../models/Payment');
+const ParcelRequest = require('../models/ParcelRequest');
+const Trip = require('../models/Trip');
+
+// Create a payment intent
+exports.createPaymentIntent = async (req, res) => {
+  try {
+    const { parcelId } = req.body;
+    console.log('Payment request received for parcelId:', parcelId);
+    console.log('User ID from token:', req.user._id);
+    
+    // Find the parcel request
+    const parcel = await ParcelRequest.findById(parcelId)
+      .populate('trip')
+      .populate('carrier');
+      
+    if (!parcel) {
+      console.log('Parcel not found:', parcelId);
+      return res.status(404).json({ message: 'Parcel not found' });
+    }
+    
+    console.log('Parcel sender:', parcel.sender);
+    console.log('User ID:', req.user._id);
+    
+    // Check if user is the sender
+    if (parcel.sender.toString() !== req.user._id) {
+      console.log('Authorization failed: User is not the sender');
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+    
+    // Check if parcel is accepted
+    if (parcel.status !== 'accepted') {
+      return res.status(400).json({ message: 'Parcel must be accepted before payment' });
+    }
+    
+    // Calculate amount based on trip price and parcel weight
+    const amount = parcel.trip.price * parcel.weight;
+    
+    // Create a payment intent with Stripe
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Stripe requires amount in cents
+      currency: 'usd',
+      metadata: {
+        parcelId: parcel._id.toString(),
+        senderId: req.user._id,
+        carrierId: parcel.carrier._id.toString()
+      }
+    });
+    
+    // Create a payment record in our database
+    const payment = new Payment({
+      parcel: parcel._id,
+      amount,
+      stripePaymentIntentId: paymentIntent.id,
+      stripeClientSecret: paymentIntent.client_secret,
+      payer: req.user._id,
+      payee: parcel.carrier._id
+    });
+    
+    await payment.save();
+    
+    // Update parcel payment status
+    parcel.paymentStatus = 'processing';
+    parcel.price = amount;
+    await parcel.save();
+    
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+      amount
+    });
+  } catch (error) {
+    console.error('Payment intent error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Confirm payment success (replaces webhook)
+exports.confirmPayment = async (req, res) => {
+  try {
+    const { paymentIntentId } = req.body;
+    
+    // Verify the payment intent with Stripe
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    
+    if (paymentIntent.status !== 'succeeded') {
+      return res.status(400).json({ message: 'Payment not successful' });
+    }
+    
+    // Update payment status in our database
+    const payment = await Payment.findOne({
+      stripePaymentIntentId: paymentIntentId
+    });
+    
+    if (!payment) {
+      return res.status(404).json({ message: 'Payment not found' });
+    }
+    
+    // Check if user is the payer
+    if (payment.payer.toString() !== req.user._id) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+    
+    payment.status = 'succeeded';
+    payment.updatedAt = Date.now();
+    await payment.save();
+    
+    // Update parcel payment status
+    const parcel = await ParcelRequest.findById(payment.parcel);
+    if (parcel) {
+      parcel.paymentStatus = 'paid';
+      await parcel.save();
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Payment confirmation error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get payment status
+exports.getPaymentStatus = async (req, res) => {
+  try {
+    const { parcelId } = req.params;
+    
+    const payment = await Payment.findOne({ parcel: parcelId });
+    if (!payment) {
+      return res.status(404).json({ message: 'Payment not found' });
+    }
+    
+    res.json({
+      status: payment.status,
+      amount: payment.amount,
+      createdAt: payment.createdAt
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
