@@ -11,6 +11,7 @@ const parcelRoutes = require('./routes/parcelRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const Message = require('./models/Message');
 const { decrypt } = require('./utils/encryption');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 require('dotenv').config();
 
@@ -39,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/trip', tripRoutes);
 app.use('/api/parcel', parcelRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Socket.IO connection handling

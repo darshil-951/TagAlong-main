@@ -59,7 +59,15 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Update chats list
       refreshChats();
     });
-    
+    newSocket.on('message', (message) => {
+      // Your existing code for handling messages
+      
+      // If the message is not from the current user and the chat is not active, create a notification
+      if (message.senderId !== currentUser._id && activeChat !== message.senderId) {
+        // You could add a function to create a notification via API
+        createMessageNotification(message);
+      }
+    });
     newSocket.on('typing_start', (data: { userId: string }) => {
       setTypingStatus(prev => ({ ...prev, [data.userId]: true }));
     });
@@ -98,6 +106,31 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
   
+  // For the createMessageNotification function
+  async function createMessageNotification(message: any) {
+    try {
+      if (!currentUser) return; // Add this null check
+      
+      const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
+      await fetch('/api/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          userId: currentUser._id,
+          type: 'message',
+          title: `New message from ${message.senderName || 'a user'}`,
+          content: message.content.substring(0, 100) + (message.content.length > 100 ? '...' : ''),
+          actionUrl: `/messages?id=${message.senderId}`,
+          metadata: { chatId: message.senderId }
+        })
+      });
+    } catch (error) {
+      console.error('Error creating message notification:', error);
+    }
+  };
   // Refresh all chats for current user
   const refreshChats = async () => {
     if (!socket || !currentUser) return Promise.resolve();
@@ -272,3 +305,6 @@ export const useChat = (): ChatContextType => {
   }
   return context;
 };
+
+
+

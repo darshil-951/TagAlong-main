@@ -12,6 +12,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const { refreshChats } = useChat(); // Add this line
   const navigate = useNavigate();
+  const [notificationCount, setNotificationCount] = useState(0);
   const handleMessagesClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (refreshChats) {
@@ -45,6 +46,35 @@ const Header: React.FC = () => {
   useEffect(() => {
     closeMobileMenu();
   }, [location]);
+  useEffect(() => {
+    const fetchNotificationCount = async () => {
+      if (!currentUser) return;
+      
+      try {
+        const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
+        const response = await fetch('/api/notifications', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const unreadCount = (data.notifications || []).filter((n: { read: any; }) => !n.read).length;
+          setNotificationCount(unreadCount);
+        }
+      } catch (err) {
+        console.error('Error fetching notification count:', err);
+      }
+    };
+    
+    fetchNotificationCount();
+    
+    // Refresh notification count every minute
+    const intervalId = setInterval(fetchNotificationCount, 60000);
+    
+    return () => clearInterval(intervalId);
+  }, [currentUser]);
 
   return (
     <header
@@ -112,11 +142,18 @@ const Header: React.FC = () => {
                   <MessageSquare size={20} />
                 </Link>
                 <Link 
-                  to="/notifications" 
-                  className="text-gray-700 hover:text-teal-500 transition-colors"
-                  aria-label="Notifications"
-                >
-                  <Bell size={20} />
+  to="/notifications" 
+  className="text-gray-700 hover:text-teal-500 transition-colors"
+  aria-label="Notifications"
+>
+                  <div className="relative">
+                    <Bell size={20} />
+                    {notificationCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {notificationCount > 9 ? '9+' : notificationCount}
+                      </span>
+                    )}
+                  </div>
                 </Link>
                 <div className="relative group">
                   <button className="flex items-center space-x-2 focus:outline-none">
@@ -250,11 +287,20 @@ const Header: React.FC = () => {
                   >
                     Messages
                   </Link>
-                  <Link
-                    to="/notifications"
+                  <Link 
+                    to="/notifications" 
                     className="block px-4 py-2 text-base font-medium text-gray-700 hover:text-teal-500 hover:bg-gray-50"
+                    aria-label="Notifications"
                   >
-                    Notifications
+                <div className="relative">
+                      {/* <Bell size={20} /> */}
+                      {notificationCount > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {notificationCount > 9 ? '9+' : notificationCount}
+                        </span>
+                      )}
+                </div>
+                Notification
                   </Link>
                   <Link
                     to="/myparcel"
