@@ -208,12 +208,15 @@ const MyParcelPage: React.FC = () => {
                         Chat
                       </button> 
                       
-                      <button
-                        className="flex items-center bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded transition-colors mt-2 shadow"
-                        onClick={() => handlePaymentClick(parcel)}
-                      >
-                        Make Payment
-                      </button>
+                      {/* Only show payment button to the sender */}
+                      {currentUser && currentUser._id === parcel.sender._id && (
+                        <button
+                          className="flex items-center bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded transition-colors mt-2 shadow"
+                          onClick={() => handlePaymentClick(parcel)}
+                        >
+                          Make Payment
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
