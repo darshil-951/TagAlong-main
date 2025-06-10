@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Calendar, Package, DollarSign, Star, Clock } from 'lucide-react';
+import { MapPin, Calendar, Package, Star, Clock, IndianRupee } from 'lucide-react';
 import { Listing, User } from '../types';
 
 
@@ -61,8 +61,8 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, onSendParcel }) => {
             </div>
             
             <div className="flex items-center text-gray-800 font-medium mt-3">
-              <DollarSign size={18} className="text-teal-500 flex-shrink-0" />
-              <span className="text-lg">${listing.price}</span>
+              <IndianRupee size={18} className="text-teal-500 flex-shrink-0" />
+              <span className="text-lg">{listing.price}</span>
               <span className="text-gray-500 text-sm ml-1">per package</span>
             </div>
           </div>

@@ -47,15 +47,25 @@ const Notification: React.FC = () => {
     }
   };
 
+  // Add this to your component's state
+  const [markingRead, setMarkingRead] = useState<string | null>(null);
+  
+  // Then update the markAsRead function
   const markAsRead = async (notificationId: string) => {
+    setMarkingRead(notificationId);
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      await fetch(`/api/notifications/${notificationId}/read`, {
+      const response = await fetch(`/api/notifications/${notificationId}/read`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to mark notification as read');
+      }
       
       // Update local state
       setNotifications(prev => 
@@ -70,6 +80,8 @@ const Notification: React.FC = () => {
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (err) {
       console.error('Error marking notification as read:', err);
+    } finally {
+      setMarkingRead(null);
     }
   };
   
@@ -78,12 +90,17 @@ const Notification: React.FC = () => {
     
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      await fetch('/api/notifications/read-all', {
+      const response = await fetch('/api/notifications/read-all', {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to mark all notifications as read');
+      }
       
       // Update local state
       setNotifications(prev => 
@@ -97,7 +114,12 @@ const Notification: React.FC = () => {
     }
   };
   
-  const deleteNotification = async (notificationId: string) => {
+  const deleteNotification = async (notificationId: string | undefined) => {
+    if (!notificationId) {
+      console.error('Cannot delete notification: ID is undefined');
+      return;
+    }
+    
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
       await fetch(`/api/notifications/${notificationId}`, {
@@ -186,7 +208,9 @@ const Notification: React.FC = () => {
               {notifications.map((notification) => (
                 <li 
                   key={notification.id}
-                  className={`${notification.read ? 'bg-white' : 'bg-teal-50'} hover:bg-gray-50 transition-colors`}
+                  className={`${notification.read ? 'bg-white' : 'bg-teal-50'} 
+                    ${markingRead === notification.id ? 'animate-pulse' : ''} 
+                    hover:bg-gray-50 transition-colors`}
                 >
                   <div className="px-4 py-5 sm:px-6">
                     <div className="flex items-start">
