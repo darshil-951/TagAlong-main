@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Calendar, PackageCheck, Box } from 'lucide-react';
+import LocationAutocomplete from './LocationAutocomplete';
 
 interface SearchFormProps {
   onSearch: (params: SearchParams) => void;
@@ -55,45 +56,33 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="relative">
             <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">
-              From
+              
             </label>
             <div className="relative">
-              <input
-                type="text"
+              <LocationAutocomplete
                 id="source"
-                placeholder="City, State"
+                label="From"
                 value={source}
-                onChange={(e) => setSource(e.target.value)}
-                className="pl-10 w-full h-12 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                onChange={setSource}
                 required
+                icon={<Search size={18} />}
               />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500">
-                  <Search size={18} />
-                </span>
-              </div>
             </div>
           </div>
 
           <div className="relative">
             <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-1">
-              To
+              
             </label>
             <div className="relative">
-              <input
-                type="text"
+              <LocationAutocomplete
                 id="destination"
-                placeholder="City, State"
+                label="To"
                 value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                className="pl-10 w-full h-12 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                onChange={setDestination}
                 required
+                icon={<Search size={18} />}
               />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500">
-                  <Search size={18} />
-                </span>
-              </div>
             </div>
           </div>
 

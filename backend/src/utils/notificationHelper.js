@@ -92,3 +92,30 @@ exports.createStatusUpdateNotification = async (userId, title, content, actionUr
     throw error;
   }
 };
+
+/**
+ * Create a payment notification
+ */
+exports.createPaymentNotification = async (userId, payerName, amount, parcelId, paymentDetails) => {
+  try {
+    const notification = new Notification({
+      userId,
+      type: 'status_update',
+      title: `Payment Received`,
+      content: `${payerName} has made a payment of ₹${amount} for parcel delivery.`,
+      actionUrl: `/myparcel`,
+      metadata: { 
+        parcelId, 
+        amount, 
+        payerName,
+        ...paymentDetails
+      }
+    });
+    
+    await notification.save();
+    return notification;
+  } catch (error) {
+    console.error('Error creating payment notification:', error);
+    throw error;
+  }
+};

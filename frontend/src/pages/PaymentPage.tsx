@@ -73,13 +73,19 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
         setProcessing(false);
         return;
       }
+      
+      // Get user information from local storage
+      const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
+      const userDataString = localStorage.getItem('tagalong-user') || sessionStorage.getItem('tagalong-user');
+      const userData = userDataString ? JSON.parse(userDataString) : null;
+      const userName = userData?.name || 'User';
   
       // Confirm the payment with Stripe
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
           billing_details: {
-            name: 'User Name', // You might want to collect this from the user
+            name: userName, // Use the actual user name instead of hardcoded value
           },
         },
       });

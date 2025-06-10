@@ -88,23 +88,23 @@ const ChatPage: React.FC = () => {
     }
   }, [currentUser]);
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, activeChat]);
+  // // Scroll to bottom when messages change
+  // useEffect(() => {
+  //   if (messagesEndRef.current) {
+  //     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }, [messages, activeChat]);
 
   // Track if the current user just sent a message
   const [justSentMessage, setJustSentMessage] = useState(false);
 
   // Scroll to bottom only when the current user sends a message
-  useEffect(() => {
-    if (messagesEndRef.current && justSentMessage) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-      setJustSentMessage(false);
-    }
-  }, [justSentMessage]);
+  // useEffect(() => {
+  //   if (messagesEndRef.current && justSentMessage) {
+  //     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  //     setJustSentMessage(false);
+  //   }
+  // }, [justSentMessage]);
 
   const handleSendMessage = () => {
     if (!messageInput.trim() || !activeChat || !currentUser) return;

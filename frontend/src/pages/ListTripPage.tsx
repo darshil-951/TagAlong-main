@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Truck, PackageCheck, Box, Upload, UserCheck, IndianRupee, Timer, FileText } from 'lucide-react';
+import LocationAutocomplete from '../components/LocationAutocomplete';
+import { Calendar, Truck, PackageCheck, Box, Upload, UserCheck, IndianRupee, Timer, FileText, Search } from 'lucide-react';
 const transportModes = [
   { value: 'car', label: 'Car' },
   { value: 'bike', label: 'Bike' },
@@ -341,26 +342,26 @@ const ListTripPage: React.FC = () => {
               <h2 className="text-xl font-semibold mb-4 flex items-center"><Truck size={20} className="mr-2" />Trip Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
-                  <input
-                    type="text"
-                    value={source}
-                    onChange={e => setSource(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="City, State"
-                    required
-                  />
+                  {/* <label className="block text-sm font-medium text-gray-700 mb-1">From</label> */}
+                  <LocationAutocomplete
+                  id="source"
+                  label="From"
+                  value={source}
+                  onChange={setSource}
+                  required
+                  icon={<Search size={18} />}
+                />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
-                  <input
-                    type="text"
-                    value={destination}
-                    onChange={e => setDestination(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="City, State"
-                    required
-                  />
+                  {/* <label className="block text-sm font-medium text-gray-700 mb-1">To</label> */}
+                  <LocationAutocomplete
+                  id="destination"
+                  label="To"
+                  value={destination}
+                  onChange={setDestination}
+                  required
+                  icon={<Search size={18} />}
+                />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">

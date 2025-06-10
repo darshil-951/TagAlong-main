@@ -541,9 +541,10 @@ const SearchPage: React.FC = () => {
                   key={String(listing._id)}
                   listing={listing}
                     onSendParcel={() => {
+                      const user = listing.user || { _id: '' };
                       setShowVerification(true);
                       setSelectedTripId(String(listing._id)); 
-                      setSelectedCarrierId(String(listing.user._id));
+                      setSelectedCarrierId(String(user._id));
                     }}
                   />
                 ))}

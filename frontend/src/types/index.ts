@@ -21,6 +21,7 @@ export interface User {
 }
 
 export interface Listing {
+  _id(_id: any): import("react").Key | null | undefined;
   user?: {
     _id: string;
     name: string;

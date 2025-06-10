@@ -97,14 +97,14 @@ exports.confirmPayment = async (req, res) => {
     // Update payment status in our database
     const payment = await Payment.findOne({
       stripePaymentIntentId: paymentIntentId
-    });
+    }).populate('payer').populate('parcel');
     
     if (!payment) {
       return res.status(404).json({ message: 'Payment not found' });
     }
     
     // Check if user is the payer
-    if (payment.payer.toString() !== req.user._id) {
+    if (payment.payer._id.toString() !== req.user._id) {
       return res.status(403).json({ message: 'Unauthorized' });
     }
     
@@ -113,10 +113,29 @@ exports.confirmPayment = async (req, res) => {
     await payment.save();
     
     // Update parcel payment status
-    const parcel = await ParcelRequest.findById(payment.parcel);
+    const parcel = await ParcelRequest.findById(payment.parcel)
+      .populate('sender');
+      
     if (parcel) {
       parcel.paymentStatus = 'paid';
       await parcel.save();
+      
+      // Create notification for the carrier
+      const notificationHelper = require('../utils/notificationHelper');
+      await notificationHelper.createStatusUpdateNotification(
+        payment.payee,
+        'Payment Received',
+        `${payment.payer.name} has made a payment of ₹${payment.amount} for parcel delivery.`,
+        `/myparcel`,
+        { 
+          parcelId: payment.parcel._id,
+          amount: payment.amount,
+          payerName: payment.payer.name,
+          payerEmail: payment.payer.email,
+          paymentDate: payment.updatedAt,
+          paymentId: payment._id
+        }
+      );
     }
     
     res.json({ success: true });

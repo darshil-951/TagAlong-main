@@ -12,6 +12,8 @@ interface Parcel {
   trip: any;
   carrier: any;
   sender: any;
+  paymentStatus?: 'unpaid' | 'processing' | 'paid';
+  price?: number;
   // Add other fields as needed
 }
 
@@ -129,7 +131,7 @@ const MyParcelPage: React.FC = () => {
   const handlePaymentClick = (parcel: Parcel) => {
     // Calculate the amount based on the parcel details
     // For this example, we'll use a fixed amount of 500
-    const amount = 500;
+    const amount = parcel.price || parcel.trip.price * parcel.weight;
     
     // Navigate to the payment page with the parcel ID and amount
     navigate('/payment', { 
@@ -208,14 +210,20 @@ const MyParcelPage: React.FC = () => {
                         Chat
                       </button> 
                       
-                      {/* Only show payment button to the sender */}
+                      {/* Only show payment button to the sender if not paid */}
                       {currentUser && currentUser._id === parcel.sender._id && (
-                        <button
-                          className="flex items-center bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded transition-colors mt-2 shadow"
-                          onClick={() => handlePaymentClick(parcel)}
-                        >
-                          Make Payment
-                        </button>
+                        parcel.paymentStatus === 'paid' ? (
+                          <span className="flex items-center bg-green-100 text-green-800 font-semibold px-5 py-2 rounded mt-2">
+                            Payment Completed
+                          </span>
+                        ) : (
+                          <button
+                            className="flex items-center bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded transition-colors mt-2 shadow"
+                            onClick={() => handlePaymentClick(parcel)}
+                          >
+                            Make Payment
+                          </button>
+                        )
                       )}
                     </div>
                   )}
