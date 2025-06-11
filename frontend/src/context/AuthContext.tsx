@@ -4,7 +4,7 @@ import { User } from '../types';
 interface AuthContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string, rememberMe?: boolean) => Promise<boolean>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<{success: boolean; isAdmin: boolean}>;
   logout: () => void;
   signUp: (name: string, email: string, password: string, phone: string) => Promise<{ success: boolean; error?: string }>;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>; // <-- Add this line
@@ -50,14 +50,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   // Add rememberMe parameter
-  const login = async (email: string, password: string, rememberMe: boolean = false): Promise<boolean> => {
+  const login = async (email: string, password: string, rememberMe: boolean = false): Promise<{success: boolean; isAdmin: boolean}> => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      if (!response.ok) return false;
+      if (!response.ok) return {success: false, isAdmin: false};
       const data = await response.json();
       setCurrentUser(data.user);
       setIsAuthenticated(true);
@@ -72,10 +72,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('tagalong-token');
         localStorage.removeItem('tagalong-user-id');
       }
-      return true;
+      return {success: true, isAdmin: data.user.role === 'admin'};
     } catch (error) {
       console.error('Login error:', error);
-      return false;
+      return {success: false, isAdmin: false};
     }
   };
 

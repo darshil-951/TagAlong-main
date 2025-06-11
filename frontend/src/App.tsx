@@ -15,14 +15,18 @@ import TermsPage from './pages/TermsPage';
 import HelpCenterPage from './pages/HelpCenterPage';
 import { LoginPage, SignupPage } from './pages/AuthPages';
 import ListTripPage from './pages/ListTripPage';
-import { mockMessages } from './data/mockData'; // Make sure these exist and are imported
+import { mockMessages } from './data/mockData';
 import { Message } from './types';
 import SettingsPage from './pages/SettingsPage';
 import MyParcelPage from './pages/MyParcelPage';
 import MyTripsPage from './pages/MyTripsPage';
 import Notification  from './pages/Notification';
 import ChatPage from './pages/ChatPage';
-import PaymentPage from './pages/PaymentPage'; // Add this line
+import PaymentPage from './pages/PaymentPage'; 
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLoginPage from './pages/AdminLoginPage';
+import DebugUserPage from './pages/DebugUserPage';
+
 
 
 
@@ -106,9 +110,13 @@ function App() {
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/mytrips" element={<MyTripsPage />} />
               <Route path="/myparcel" element={<MyParcelPage />} />
-              <Route path="/payment" element={<PaymentPage />} /> {/* Add this line */}
+              <Route path="/payment" element={<PaymentPage />} />
               <Route path="/messages" element={<ChatPage />} />
               <Route path="/notifications" element={<Notification />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              // Add this route in your Routes component (around line 100)
+              <Route path="/admin-login" element={<AdminLoginPage />} />
+              <Route path="/debug-user" element={<DebugUserPage />} />
             </Routes>
           </Layout>
         </Router>

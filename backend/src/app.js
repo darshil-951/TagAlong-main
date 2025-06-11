@@ -13,6 +13,7 @@ const Message = require('./models/Message');
 const { decrypt } = require('./utils/encryption');
 const notificationRoutes = require('./routes/notificationRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 require('dotenv').config();
 
@@ -43,6 +44,7 @@ app.use('/api/parcel', parcelRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Socket.IO connection handling

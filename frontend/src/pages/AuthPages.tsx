@@ -40,7 +40,15 @@ export const LoginPage: React.FC = () => {
     try {
       const success = await login(formData.email, formData.password, rememberMe);
       if (success) {
-        navigate('/');
+        // Get the current user from context after successful login
+        const { currentUser } = useAuth();
+        
+        // Check if user is admin and redirect accordingly
+        if (currentUser?.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
       } else {
         setError('Invalid email or password. Please check your credentials.');
       }
