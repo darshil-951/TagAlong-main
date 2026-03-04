@@ -16,14 +16,14 @@ const TermsPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50 pt-20 pb-16 px-4 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pt-20 pb-16 px-4 relative overflow-x-hidden">
       {/* Decorative SVG background */}
       <svg className="absolute left-0 top-0 w-full h-80 opacity-10 pointer-events-none" viewBox="0 0 1440 320">
         <path fill="#14b8a6" fillOpacity="1" d="M0,224L60,197.3C120,171,240,117,360,117.3C480,117,600,171,720,197.3C840,224,960,224,1080,197.3C1200,171,1320,117,1380,90.7L1440,64L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
       </svg>
       <div className="max-w-4xl mx-auto relative z-10">
         <div ref={headerRef} className="text-center mb-10">
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-8"><u><center>Terms and Conditions</center></u></h1>
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-8"><u><center>Terms and Conditions</center></u></h1>
         </div>
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Effective Date</h2>

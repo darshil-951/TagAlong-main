@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapPin, Clock, Package, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getApiEndpoint } from '../utils/api';
 
 interface Trip {
   _id: string;
@@ -42,7 +43,7 @@ const EditTripModal: React.FC<{ trip: Trip | null, onClose: () => void, onDelete
     e.preventDefault();
     // Implement save logic here
     try {
-      const response = await fetch(`/api/trip/trips/${formData._id}`, { // Updated endpoint
+      const response = await fetch(getApiEndpoint(`/api/trip/trips/${formData._id}`), { // Updated endpoint
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +62,7 @@ const EditTripModal: React.FC<{ trip: Trip | null, onClose: () => void, onDelete
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-xl font-bold mb-4">Edit Trip</h2>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
@@ -137,7 +138,7 @@ const MyTripsPage: React.FC = () => {
     const fetchTrips = async () => {
       setLoading(true);
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const res = await fetch('/api/trip/mytrips', {
+      const res = await fetch(getApiEndpoint('/api/trip/mytrips'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -151,26 +152,26 @@ const MyTripsPage: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-        const response = await fetch(`/api/trip/trips/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token')}`
-            }
-        });
-        if (response.ok) {
-            // Remove the deleted trip from the state
-            setTrips(prevTrips => prevTrips.filter(trip => trip._id !== id));
-            setSelectedTrip(null);
-        } else {
-            console.error('Failed to delete trip');
+      const response = await fetch(getApiEndpoint(`/api/trip/trips/${id}`), {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token')}`
         }
+      });
+      if (response.ok) {
+        // Remove the deleted trip from the state
+        setTrips(prevTrips => prevTrips.filter(trip => trip._id !== id));
+        setSelectedTrip(null);
+      } else {
+        console.error('Failed to delete trip');
+      }
     } catch (error) {
-        console.error('Error deleting trip:', error);
+      console.error('Error deleting trip:', error);
     }
-};
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-12">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-gray-900">My Trips</h1>
         {loading ? (
@@ -185,18 +186,18 @@ const MyTripsPage: React.FC = () => {
             {trips.map(trip => (
               <div
                 key={trip._id}
-                className="bg-white rounded-xl shadow-lg flex flex-col md:flex-row items-center justify-between px-6 py-6"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg flex flex-col md:flex-row items-center justify-between px-6 py-6"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center mb-2">
                     <span className="text-teal-600 mr-2">
                       <MapPin size={22} />
                     </span>
-                    <span className="text-xl font-semibold text-gray-900">
+                    <span className="text-xl font-semibold text-gray-900 dark:text-white">
                       {trip.source} to {trip.destination}
                     </span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-4 text-gray-700 mb-2">
+                  <div className="flex flex-wrap items-center gap-4 text-gray-700 dark:text-gray-300 mb-2">
                     <span className="flex items-center">
                       <Clock size={18} className="text-teal-500 mr-1" />
                       {new Date(trip.departureDate).toLocaleString('en-US', {
@@ -225,14 +226,14 @@ const MyTripsPage: React.FC = () => {
                       </span>
                     )}
                   </div>
-                  <div className="text-gray-700 mb-2">
+                  <div className="text-gray-700 dark:text-gray-300 mb-2">
                     {trip.description}
                   </div>
                 </div>
                 <div className="flex flex-col items-end min-w-[220px] ml-8">
                   <div className="flex items-center mb-2">
                     <span className="text-2xl font-bold text-teal-600 mr-1">₹{trip.price}</span>
-                    <span className="text-gray-500 text-sm">per package</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">per package</span>
                   </div>
                   <button
                     className="flex items-center bg-teal-500 hover:bg-teal-600 text-white font-semibold px-5 py-2 rounded transition-colors mt-2"

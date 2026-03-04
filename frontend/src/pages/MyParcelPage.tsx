@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Message, User } from '../types';
+import { getApiEndpoint, getUploadUrl } from '../utils/api';
 
 interface Parcel {
   _id: string;
@@ -30,7 +31,7 @@ const MyParcelPage: React.FC = () => {
   // Add this function to handle status updates
   const handleUpdateStatus = async (parcelId: string, status: 'accepted' | 'rejected') => {
     const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-    const res = await fetch(`/api/parcel/request/${parcelId}/status`, {
+    const res = await fetch(getApiEndpoint(`/api/parcel/request/${parcelId}/status`), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +48,7 @@ const MyParcelPage: React.FC = () => {
     const fetchParcels = async () => {
       setLoading(true);
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const res = await fetch('/api/parcel/myparcels', {
+      const res = await fetch(getApiEndpoint('/api/parcel/myparcels'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -62,16 +63,16 @@ const MyParcelPage: React.FC = () => {
   // Handle opening chat
   const handleOpenChat = async (parcel: Parcel) => {
     if (!currentUser) return;
-    
+
     setSelectedParcel(parcel);
-    
+
     // Determine chat partner (if current user is sender, chat with carrier, and vice versa)
-    const partnerId = currentUser._id === parcel.sender._id 
-      ? parcel.carrier._id 
+    const partnerId = currentUser._id === parcel.sender._id
+      ? parcel.carrier._id
       : parcel.sender._id;
-    
+
     setChatPartnerId(partnerId);
-    
+
     try {
       // Fetch chat history
       setShowChat(true);
@@ -83,21 +84,21 @@ const MyParcelPage: React.FC = () => {
   // Handle sending a message
   const handleChatClick = (parcel: Parcel) => {
     if (!currentUser) return;
-    
+
     // Determine chat partner (if current user is sender, chat with carrier, and vice versa)
-    const partnerId = currentUser._id === parcel.sender._id 
-      ? parcel.carrier._id 
+    const partnerId = currentUser._id === parcel.sender._id
+      ? parcel.carrier._id
       : parcel.sender._id;
-    
+
     // Get partner details
     const chatPartner = currentUser._id === parcel.sender._id ? parcel.carrier : parcel.sender;
-    
+
     // Create a proper User object for the chat partner
     const chatPartnerUser: User = {
       _id: partnerId,
       id: partnerId,
       name: chatPartner.name,
-      avatar: chatPartner.avatar || `http://localhost:5000/uploads/avatars/${partnerId}.jpg`,
+      avatar: chatPartner.avatar || getUploadUrl(`/uploads/avatars/${partnerId}.jpg`),
       verificationStatus: chatPartner.verificationStatus,
       onlineStatus: 'online',
       lastSeen: new Date().toISOString(),
@@ -111,18 +112,18 @@ const MyParcelPage: React.FC = () => {
       rating: 0,
       reviews: []
     };
-    
-    
+
+
     // Store the selected chat partner in localStorage for persistence
     localStorage.setItem('tagalong-selected-chat', JSON.stringify({
       partnerId,
       partnerName: chatPartner.name,
-      partnerAvatar: chatPartner.avatar || `http://localhost:5000/uploads/avatars/${partnerId}.jpg`,
+      partnerAvatar: chatPartner.avatar || getUploadUrl(`/uploads/avatars/${partnerId}.jpg`),
       partnerVerificationStatus: chatPartner.verificationStatus || 'unverified',
       partnerOnlineStatus: 'offline',
       partnerLastSeen: new Date().toISOString()
     }));
-    
+
     // Navigate to the messages page
     navigate('/messages');
   };
@@ -132,13 +133,13 @@ const MyParcelPage: React.FC = () => {
     // Calculate the amount based on the parcel details
     // For this example, we'll use a fixed amount of 500
     const amount = parcel.price || parcel.trip.price * parcel.weight;
-    
+
     // Navigate to the payment page with the parcel ID and amount
-    navigate('/payment', { 
-      state: { 
+    navigate('/payment', {
+      state: {
         parcelId: parcel._id,
         amount: amount
-      } 
+      }
     });
   };
 
@@ -146,7 +147,7 @@ const MyParcelPage: React.FC = () => {
     const fetchParcels = async () => {
       setLoading(true);
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const res = await fetch('/api/parcel/myparcels', {
+      const res = await fetch(getApiEndpoint('/api/parcel/myparcels'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -159,7 +160,7 @@ const MyParcelPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-12">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-gray-900">My Parcels</h1>
         {loading ? (
@@ -169,17 +170,16 @@ const MyParcelPage: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {parcels.map(parcel => (
-              <div key={parcel._id} className="bg-white rounded-xl shadow-lg flex flex-col md:flex-row items-center justify-between px-6 py-6 mb-4 border border-gray-200">
+              <div key={parcel._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg flex flex-col md:flex-row items-center justify-between px-6 py-6 mb-4 border border-gray-200">
                 <div className="flex-1 min-w-0">
-                  <div className="text-gray-700 mb-2 font-semibold text-lg">
+                  <div className="text-gray-700 dark:text-gray-300 mb-2 font-semibold text-lg">
                     {parcel.description}
                   </div>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className={`text-sm px-3 py-1 rounded-full font-medium ${
-                      parcel.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                      parcel.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span className={`text-sm px-3 py-1 rounded-full font-medium ${parcel.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                        parcel.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                          'bg-yellow-100 text-yellow-800'
+                      }`}>
                       {parcel.status.charAt(0).toUpperCase() + parcel.status.slice(1)}
                     </span>
                   </div>
@@ -208,8 +208,8 @@ const MyParcelPage: React.FC = () => {
                         onClick={() => handleChatClick(parcel)}
                       >
                         Chat
-                      </button> 
-                      
+                      </button>
+
                       {/* Only show payment button to the sender if not paid */}
                       {currentUser && currentUser._id === parcel.sender._id && (
                         parcel.paymentStatus === 'paid' ? (

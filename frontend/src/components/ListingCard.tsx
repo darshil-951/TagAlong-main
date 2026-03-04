@@ -32,7 +32,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, onSendParcel }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="p-5">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -43,19 +43,19 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, onSendParcel }) => {
               </h3>
             </div>
             
-            <div className="flex items-center text-gray-600 mb-2">
+            <div className="flex items-center text-gray-600 dark:text-gray-400 mb-2">
               <Calendar size={16} className="flex-shrink-0 mr-1" />
               <span className="text-sm">{departureDate} at {departureTime}</span>
             </div>
             
-            <div className="flex items-center text-gray-600 mb-2">
+            <div className="flex items-center text-gray-600 dark:text-gray-400 mb-2">
               <Package size={16} className="flex-shrink-0 mr-1" />
               <span className="text-sm">
                 Up to {listing.capacity.weight}kg, {listing.capacity.volume}m³
               </span>
             </div>
             
-            <div className="flex items-center text-gray-600 mb-2">
+            <div className="flex items-center text-gray-600 dark:text-gray-400 mb-2">
               <Clock size={16} className="flex-shrink-0 mr-1" />
               <span className="text-sm">Est. travel time: 5 hours</span>
             </div>
@@ -63,7 +63,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, onSendParcel }) => {
             <div className="flex items-center text-gray-800 font-medium mt-3">
               <IndianRupee size={18} className="text-teal-500 flex-shrink-0" />
               <span className="text-lg">{listing.price}</span>
-              <span className="text-gray-500 text-sm ml-1">per package</span>
+              <span className="text-gray-500 dark:text-gray-400 text-sm ml-1">per package</span>
             </div>
           </div>
           
@@ -86,7 +86,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, onSendParcel }) => {
         </div>
         
         <div className="mt-4 pt-4 border-t border-gray-100">
-          <p className="text-gray-600 text-sm line-clamp-2">{listing.description}</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{listing.description}</p>
         </div>
         
         <div className="mt-4 flex justify-between items-center">

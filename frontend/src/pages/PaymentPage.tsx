@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useAuth } from '../context/AuthContext';
+import { getApiEndpoint } from '../utils/api';
 
 // Initialize Stripe with your publishable key
 // Replace with your actual Stripe publishable key when in production
@@ -22,7 +24,7 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
     const fetchPaymentIntent = async () => {
       try {
         const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-        const response = await fetch('/api/payment/create-payment-intent', {
+        const response = await fetch(getApiEndpoint('/api/payment/create-payment-intent'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -51,14 +53,14 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     if (!stripe || !elements) {
       return;
     }
-  
+
     setProcessing(true);
     setError(null);
-  
+
     try {
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) {
@@ -66,20 +68,20 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
         setProcessing(false);
         return;
       }
-      
+
       // Add this check to ensure client secret is available
       if (!clientSecret) {
         setError('Payment not initialized. Please try again.');
         setProcessing(false);
         return;
       }
-      
+
       // Get user information from local storage
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
       const userDataString = localStorage.getItem('tagalong-user') || sessionStorage.getItem('tagalong-user');
       const userData = userDataString ? JSON.parse(userDataString) : null;
       const userName = userData?.name || 'User';
-  
+
       // Confirm the payment with Stripe
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
@@ -89,17 +91,17 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
           },
         },
       });
-  
+
       if (error) {
         setError(`Payment failed: ${error.message}`);
         setProcessing(false);
         return;
       }
-  
+
       if (paymentIntent.status === 'succeeded') {
         // Notify our backend about the successful payment
         const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-        await fetch('/api/payment/confirm-payment', {
+        await fetch(getApiEndpoint('/api/payment/confirm-payment'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -107,10 +109,10 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
           },
           body: JSON.stringify({ paymentIntentId: paymentIntent.id })
         });
-  
+
         setSucceeded(true);
         setProcessing(false);
-        
+
         // Redirect or show success message
         setTimeout(() => {
           navigate('/myparcel', { state: { paymentSuccess: true } });
@@ -124,12 +126,12 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <div className="mb-6">
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Card Details
         </label>
-        <div className="p-3 border border-gray-300 rounded">
+        <div className="p-3 border border-gray-300 dark:border-gray-600 rounded">
           <CardElement
             options={{
               style: {
@@ -148,15 +150,16 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
           />
         </div>
       </div>
-      
+
       {error && <div className="text-red-500 mb-4">{error}</div>}
-      
+
       <button
         type="submit"
         disabled={!stripe || processing || succeeded}
         className={`w-full py-2 px-4 rounded font-bold ${processing || succeeded || !stripe
-          ? 'bg-gray-400 cursor-not-allowed'
-          : 'bg-teal-500 hover:bg-teal-600 text-white'}`}
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-teal-500 hover:bg-teal-600 text-white'
+          }`}
       >
         {processing ? 'Processing...' : succeeded ? 'Payment Successful!' : `Pay ₹${amount}`}
       </button>
@@ -171,7 +174,7 @@ const PaymentPage: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top on mount
-    
+
     // Get parcel data from location state
     const state = location.state as { parcelId: string, amount: number } | null;
     if (!state || !state.parcelId || !state.amount) {
@@ -179,7 +182,7 @@ const PaymentPage: React.FC = () => {
       navigate('/myparcel');
       return;
     }
-    
+
     setParcelData(state);
   }, [location, navigate]);
 
@@ -188,27 +191,27 @@ const PaymentPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-12">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-gray-900 text-center">Complete Your Payment</h1>
-        
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
             <div>
               <h2 className="text-xl font-semibold text-gray-800">Payment Details</h2>
               <p className="text-gray-600">Secure payment processing by Stripe</p>
             </div>
-            <div className="text-2xl font-bold text-teal-600">₹{parcelData.amount/2}</div>
+            <div className="text-2xl font-bold text-teal-600">₹{parcelData.amount / 2}</div>
           </div>
-          
+
           <Elements stripe={stripePromise}>
-            <CheckoutForm parcelId={parcelData.parcelId} amount={parcelData.amount/2} />
+            <CheckoutForm parcelId={parcelData.parcelId} amount={parcelData.amount / 2} />
           </Elements>
         </div>
-        
+
         <div className="text-center">
-          <button 
-            onClick={() => navigate('/myparcel')} 
+          <button
+            onClick={() => navigate('/myparcel')}
             className="text-teal-600 hover:text-teal-800 font-medium"
           >
             Cancel and return to My Parcels

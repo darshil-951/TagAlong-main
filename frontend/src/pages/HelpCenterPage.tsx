@@ -146,7 +146,7 @@ const HelpCenterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50 pt-20 pb-16 px-2 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pt-20 pb-16 px-2 relative overflow-x-hidden">
       {/* Decorative SVG background */}
       <svg className="absolute left-0 top-0 w-full h-80 opacity-10 pointer-events-none" viewBox="0 0 1440 320">
         <path fill="#14b8a6" fillOpacity="1" d="M0,224L60,197.3C120,171,240,117,360,117.3C480,117,600,171,720,197.3C840,224,960,224,1080,197.3C1200,171,1320,117,1380,90.7L1440,64L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
@@ -154,11 +154,11 @@ const HelpCenterPage: React.FC = () => {
       <div className="relative z-10 max-w-4xl mx-auto">
         {/* Animated Header */}
         <div ref={headerRef} className="text-center mb-10">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight">
             <u>Help Center</u>
             
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-6">
             How can we help you? Browse our most common help topics or search for answers.
           </p>
           <div className="flex justify-center">
@@ -174,7 +174,7 @@ const HelpCenterPage: React.FC = () => {
         </div>
         {/* Slideshow of Help Cards with scroll buttons */}
         <div className="mt-12 relative">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Popular Help Topics</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Popular Help Topics</h2>
           {/* Fade edges */}
           <div className="pointer-events-none absolute left-0 top-0 h-full w-16 z-10 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
           <div className="pointer-events-none absolute right-0 top-0 h-full w-16 z-10 bg-gradient-to-l from-white via-white/80 to-transparent"></div>
@@ -210,7 +210,7 @@ const HelpCenterPage: React.FC = () => {
                 style={{ scrollSnapAlign: 'center' }}
               >
                 <div className="mb-4">{topic.icon}</div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 text-center">{topic.title}</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">{topic.title}</h3>
                 <p className="text-gray-600 text-center mb-4">{topic.desc}</p>
                 <button
                   className="mt-auto bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white font-semibold px-5 py-2 rounded-xl flex items-center transition-all duration-200 shadow"
@@ -230,7 +230,7 @@ const HelpCenterPage: React.FC = () => {
                 style={{ scrollSnapAlign: 'center' }}
               >
                 <div className="mb-4">{topic.icon}</div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 text-center">{topic.title}</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">{topic.title}</h3>
                 <p className="text-gray-600 text-center mb-4">{topic.desc}</p>
                 <button
                   className="mt-auto bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white font-semibold px-5 py-2 rounded-xl flex items-center transition-all duration-200 shadow"
@@ -272,7 +272,7 @@ const HelpCenterPage: React.FC = () => {
           {/* Popup Modal */}
           {activeTopic && (
             <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-              <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full relative">
                 <button
                   className="absolute top-3 right-3 text-gray-400 hover:text-teal-500 text-2xl"
                   onClick={() => setActiveTopic(null)}
@@ -288,7 +288,7 @@ const HelpCenterPage: React.FC = () => {
                       <p className="text-gray-700 text-center mb-4">
                         Welcome to TagAlong! To get started, create your account, set up your profile with your travel or delivery preferences, and explore our platform. Whether you're a traveler or a sender, our intuitive interface makes it easy to connect and manage your journeys.
                       </p>
-                      <ul className="text-gray-600 text-sm mb-2 list-disc pl-5">
+                      <ul className="text-gray-600 dark:text-gray-400 text-sm mb-2 list-disc pl-5">
                         <li>Sign up with your email or social account</li>
                         <li>Complete your profile for better matches</li>
                         <li>Browse available trips or delivery requests</li>
@@ -300,7 +300,7 @@ const HelpCenterPage: React.FC = () => {
                       <p className="text-gray-700 text-center mb-4">
                         Booking a trip or sending a package is simple with TagAlong. Choose your route, select your preferences, and track your deliveries in real-time. Our platform ensures safe and reliable connections between travelers and senders.
                       </p>
-                      <ul className="text-gray-600 text-sm mb-2 list-disc pl-5">
+                      <ul className="text-gray-600 dark:text-gray-400 text-sm mb-2 list-disc pl-5">
                         <li>Find trips that match your schedule</li>
                         <li>Book instantly or send a request</li>
                         <li>Track your delivery status at every step</li>
@@ -312,7 +312,7 @@ const HelpCenterPage: React.FC = () => {
                       <p className="text-gray-700 text-center mb-4">
                         TagAlong offers secure and transparent payment options. Review pricing before you book, pay safely through our platform, and manage all your transactions in one place.
                       </p>
-                      <ul className="text-gray-600 text-sm mb-2 list-disc pl-5">
+                      <ul className="text-gray-600 dark:text-gray-400 text-sm mb-2 list-disc pl-5">
                         <li>Multiple payment methods supported</li>
                         <li>Clear pricing with no hidden fees</li>
                         <li>View your payment history anytime</li>
@@ -324,7 +324,7 @@ const HelpCenterPage: React.FC = () => {
                       <p className="text-gray-700 text-center mb-4">
                         Your safety is our top priority. TagAlong verifies all users, provides secure messaging, and offers community guidelines to ensure a trustworthy environment for everyone.
                       </p>
-                      <ul className="text-gray-600 text-sm mb-2 list-disc pl-5">
+                      <ul className="text-gray-600 dark:text-gray-400 text-sm mb-2 list-disc pl-5">
                         <li>User verification and profile checks</li>
                         <li>Secure in-app communication</li>
                         <li>24/7 support for any concerns</li>
@@ -336,7 +336,7 @@ const HelpCenterPage: React.FC = () => {
                       <p className="text-gray-700 text-center mb-4">
                         Need help or want to connect with another user? Use our in-app messaging to communicate safely, or reach out to our support team for quick assistance.
                       </p>
-                      <ul className="text-gray-600 text-sm mb-2 list-disc pl-5">
+                      <ul className="text-gray-600 dark:text-gray-400 text-sm mb-2 list-disc pl-5">
                         <li>Message travelers or senders directly</li>
                         <li>Get instant notifications for replies</li>
                         <li>Contact our support team anytime</li>
@@ -348,7 +348,7 @@ const HelpCenterPage: React.FC = () => {
                       <p className="text-gray-700 text-center mb-4">
                         Manage your TagAlong account with ease. Update your profile, adjust privacy settings, and control your notifications to personalize your experience.
                       </p>
-                      <ul className="text-gray-600 text-sm mb-2 list-disc pl-5">
+                      <ul className="text-gray-600 dark:text-gray-400 text-sm mb-2 list-disc pl-5">
                         <li>Edit your personal information</li>
                         <li>Set your privacy and notification preferences</li>
                         <li>Deactivate or delete your account anytime</li>
@@ -362,7 +362,7 @@ const HelpCenterPage: React.FC = () => {
         </div>
         {/* Contact Support CTA */}
         <div className="mt-16 text-center">
-          <p className="text-lg text-gray-700 mb-4">
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
             Can't find what you're looking for?
           </p>
           <a

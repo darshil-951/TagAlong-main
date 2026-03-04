@@ -6,6 +6,7 @@ import ListingCard from '../components/ListingCard';
 import SearchForm, { SearchParams } from '../components/SearchForm';
 import { Listing } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { getApiEndpoint } from '../utils/api';
 
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const SearchPage: React.FC = () => {
   const [otp, setOtp] = useState('');
   const [otpVerified, setOtpVerified] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
- 
+
   const [step, setStep] = useState(1);
   const [parcelDescription, setParcelDescription] = useState("");
   const [parcelWeight, setParcelWeight] = useState(1);
@@ -54,7 +55,7 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await fetch('/api/trip/alltrips');
+        const response = await fetch(getApiEndpoint('/api/trip/alltrips'));
         if (response.ok) {
           const data = await response.json();
           // Map backend trips to expected Listing structure
@@ -206,7 +207,7 @@ const SearchPage: React.FC = () => {
       const formData = new FormData();
       formData.append("aadhaar", e.target.files[0]);
       try {
-        const res = await fetch("/api/trip/ocr/aadhaar", { method: "POST", body: formData });
+        const res = await fetch(getApiEndpoint("/api/trip/ocr/aadhaar"), { method: "POST", body: formData });
         const data = await res.json();
         if (data.aadhaarNumber) {
           setAadhaarNumber(data.aadhaarNumber);
@@ -223,7 +224,7 @@ const SearchPage: React.FC = () => {
   }
 
   function getAuthenticatedUserId() {
-    
+
     return currentUser ? currentUser.id : null;
   }
   function handleVerifyOtp(): void {
@@ -261,7 +262,7 @@ const SearchPage: React.FC = () => {
         return;
       }
       try {
-        const response = await fetch('/api/parcel/request', {
+        const response = await fetch(getApiEndpoint('/api/parcel/request'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -311,32 +312,32 @@ const SearchPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Find Available Trips</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Find Available Trips</h1>
           <SearchForm onSearch={handleSearch} className="bg-white shadow rounded-lg" initialValues={searchCriteria} />
         </div>
 
         <div className="lg:flex lg:gap-8">
           {/* Toast Notification */}
-    
-    {showToast && toastType === 'otp' && generatedOtp && (
-  <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow z-50">
-    OTP sent: <span className="font-bold">{generatedOtp}</span>
-  </div>
-)}
-{showToast && toastType === 'request' && (
-  <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow">
-    Request sent
-  </div>
-)}
-    {/* ... existing code ... */}
+
+          {showToast && toastType === 'otp' && generatedOtp && (
+            <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow z-50">
+              OTP sent: <span className="font-bold">{generatedOtp}</span>
+            </div>
+          )}
+          {showToast && toastType === 'request' && (
+            <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow">
+              Request sent
+            </div>
+          )}
+          {/* ... existing code ... */}
           {/* Sidebar Filters for Desktop */}
           <div className="hidden lg:block lg:w-1/4">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-24">
               <div className="border-b pb-4 mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Price Range</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Price Range</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-600">${priceRange[0]}</span>
@@ -351,7 +352,7 @@ const SearchPage: React.FC = () => {
                         min="0"
                         value={priceRange[0] ?? ''}
                         onChange={e => setPriceRange([e.target.value ? Number(e.target.value) : null, priceRange[1]])}
-                        className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                        className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                       />
                     </div>
                     <div>
@@ -363,7 +364,7 @@ const SearchPage: React.FC = () => {
                         max={priceRange[1] ?? ''}
                         value={priceRange[0] ?? ''}
                         onChange={e => setPriceRange([priceRange[0], e.target.value ? Number(e.target.value) : null])}
-                        className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                        className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                       />
                     </div>
                   </div>
@@ -371,11 +372,11 @@ const SearchPage: React.FC = () => {
               </div>
 
               <div className="border-b pb-4 mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Sort By</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Sort By</h3>
                 <select
                   value={sortOption}
                   onChange={handleSortChange}
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                 >
                   <option value="date_asc">Departure: Earliest First</option>
                   <option value="price_asc">Price: Low to High</option>
@@ -393,7 +394,7 @@ const SearchPage: React.FC = () => {
                 </button>
                 <button
                   onClick={resetFilters}
-                  className="w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  className="w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 transition-colors"
                 >
                   Reset Filters
                 </button>
@@ -405,7 +406,7 @@ const SearchPage: React.FC = () => {
           <div className="lg:hidden mb-4">
             <button
               onClick={toggleFilters}
-              className="flex items-center justify-center w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 transition-colors"
             >
               <Filter size={18} className="mr-2" />
               {showFilters ? 'Hide Filters' : 'Show Filters'}
@@ -413,9 +414,9 @@ const SearchPage: React.FC = () => {
 
             {/* Mobile Filters */}
             {showFilters && (
-              <div className="mt-4 bg-white rounded-lg shadow-md p-6">
+              <div className="mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                 <div className="border-b pb-4 mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Price Range</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Price Range</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-600">${priceRange[0]}</span>
@@ -431,7 +432,7 @@ const SearchPage: React.FC = () => {
                           max={priceRange[1] ?? ''}
                           value={priceRange[0] ?? ''}
                           onChange={handlePriceChange}
-                          className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                          className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         />
                       </div>
                       <div>
@@ -442,7 +443,7 @@ const SearchPage: React.FC = () => {
                           min="0"
                           value={priceRange[0] ?? ''}
                           onChange={e => setPriceRange([e.target.value ? Number(e.target.value) : null, priceRange[1]])}
-                          className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                          className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         />
                       </div>
                     </div>
@@ -450,11 +451,11 @@ const SearchPage: React.FC = () => {
                 </div>
 
                 <div className="border-b pb-4 mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Sort By</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Sort By</h3>
                   <select
                     value={sortOption}
                     onChange={handleSortChange}
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                    className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                   >
                     <option value="date_asc">Departure: Earliest First</option>
                     <option value="price_asc">Price: Low to High</option>
@@ -472,7 +473,7 @@ const SearchPage: React.FC = () => {
                   </button>
                   <button
                     onClick={resetFilters}
-                    className="w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                    className="w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 transition-colors"
                   >
                     Reset Filters
                   </button>
@@ -484,7 +485,7 @@ const SearchPage: React.FC = () => {
           {/* Main Content */}
           <div className="lg:w-3/4">
             {searchCriteria.source && searchCriteria.destination && (
-              <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center">
                     <MapPin size={18} className="text-teal-500 mr-1" />
@@ -538,12 +539,12 @@ const SearchPage: React.FC = () => {
 
                 {filteredListings.map(listing => (
                   <ListingCard
-                  key={String(listing._id)}
-                  listing={listing}
+                    key={String(listing._id)}
+                    listing={listing}
                     onSendParcel={() => {
                       const user = listing.user || { _id: '' };
                       setShowVerification(true);
-                      setSelectedTripId(String(listing._id)); 
+                      setSelectedTripId(String(listing._id));
                       setSelectedCarrierId(String(user._id));
                     }}
                   />
@@ -552,7 +553,7 @@ const SearchPage: React.FC = () => {
                 {showVerification && (
                   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
                     <form onSubmit={handleSubmit}
-                      className="relative bg-white rounded-lg shadow-lg pt-10 pb-8 px-8 w-full max-w-2xl mx-auto"
+                      className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg pt-10 pb-8 px-8 w-full max-w-2xl mx-auto"
                     >
                       <button
                         type="button"
@@ -569,7 +570,7 @@ const SearchPage: React.FC = () => {
                             Aadhaar Verification (with OTP)
                           </h2>
                           <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                               Upload Aadhaar Image or PDF
                             </label>
                             <input
@@ -611,14 +612,14 @@ const SearchPage: React.FC = () => {
                               )}
                               {otpSent && !otpVerified && (
                                 <div className="mt-4">
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Enter OTP sent to {aadhaarPhone}
                                   </label>
                                   <input
                                     type="text"
                                     value={otp}
                                     onChange={e => setOtp(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                                     maxLength={6}
                                     required
                                   />
@@ -657,34 +658,34 @@ const SearchPage: React.FC = () => {
                         <div>
                           <h2 className="text-xl font-semibold mb-4 flex items-center">Parcel Details</h2>
                           <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Parcel Description</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Parcel Description</label>
                             <input
                               type="text"
                               value={parcelDescription}
                               onChange={e => setParcelDescription(e.target.value)}
-                              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                               placeholder="Describe your parcel"
                               required
                             />
                           </div>
                           <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Weight (kg)</label>
                             <input
                               type="number"
                               value={parcelWeight}
                               onChange={e => setParcelWeight(Number(e.target.value))}
-                              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                               min={0.1}
                               step={0.1}
                               required
                             />
                           </div>
                           <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
                             <select
                               value={parcelCategory}
                               onChange={e => setParcelCategory(e.target.value)}
-                              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                               required
                             >
                               <option value="">Select category</option>
@@ -720,12 +721,12 @@ const SearchPage: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="bg-white rounded-lg shadow-md p-8 text-center">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center">
                 <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 mb-6">
                   <MapPin size={32} className="text-gray-400" />
                 </div>
                 <h3 className="text-xl font-medium text-gray-900 mb-2">No trips found</h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
                   We couldn't find any trips matching your search criteria. Try adjusting your filters or search for different locations.
                 </p>
                 <button

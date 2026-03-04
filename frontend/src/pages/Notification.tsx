@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { getApiEndpoint } from '../utils/api';
 import { Notification as NotificationType } from '../types';
 import { Bell, MessageCircle, AlertTriangle, CheckCircle, Info, ExternalLink, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -19,23 +20,23 @@ const Notification: React.FC = () => {
 
   const fetchNotifications = async () => {
     if (!currentUser) return;
-    
+
     setLoading(true);
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch('/api/notifications', {
+      const response = await fetch(getApiEndpoint('/api/notifications'), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch notifications');
       }
-      
+
       const data = await response.json();
       setNotifications(data.notifications || []);
-      
+
       // Count unread notifications
       const unread = (data.notifications || []).filter((n: NotificationType) => !n.read).length;
       setUnreadCount(unread);
@@ -49,33 +50,33 @@ const Notification: React.FC = () => {
 
   // Add this to your component's state
   const [markingRead, setMarkingRead] = useState<string | null>(null);
-  
+
   // Then update the markAsRead function
   const markAsRead = async (notificationId: string) => {
     setMarkingRead(notificationId);
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch(`/api/notifications/${notificationId}/read`, {
+      const response = await fetch(getApiEndpoint(`/api/notifications/${notificationId}/read`), {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to mark notification as read');
       }
-      
+
       // Update local state
-      setNotifications(prev => 
-        prev.map(notification => 
-          notification.id === notificationId 
-            ? { ...notification, read: true } 
+      setNotifications(prev =>
+        prev.map(notification =>
+          notification.id === notificationId
+            ? { ...notification, read: true }
             : notification
         )
       );
-      
+
       // Update unread count
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (err) {
@@ -84,55 +85,55 @@ const Notification: React.FC = () => {
       setMarkingRead(null);
     }
   };
-  
+
   const markAllAsRead = async () => {
     if (unreadCount === 0) return;
-    
+
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch('/api/notifications/read-all', {
+      const response = await fetch(getApiEndpoint('/api/notifications/read-all'), {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to mark all notifications as read');
       }
-      
+
       // Update local state
-      setNotifications(prev => 
+      setNotifications(prev =>
         prev.map(notification => ({ ...notification, read: true }))
       );
-      
+
       // Update unread count
       setUnreadCount(0);
     } catch (err) {
       console.error('Error marking all notifications as read:', err);
     }
   };
-  
+
   const deleteNotification = async (notificationId: string | undefined) => {
     if (!notificationId) {
       console.error('Cannot delete notification: ID is undefined');
       return;
     }
-    
+
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      await fetch(`/api/notifications/${notificationId}`, {
+      await fetch(getApiEndpoint(`/api/notifications/${notificationId}`), {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       // Update local state
       const updatedNotifications = notifications.filter(n => n.id !== notificationId);
       setNotifications(updatedNotifications);
-      
+
       // Update unread count if needed
       const deletedNotification = notifications.find(n => n.id === notificationId);
       if (deletedNotification && !deletedNotification.read) {
@@ -159,20 +160,20 @@ const Notification: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Notifications</h1>
           <div className="flex space-x-4">
             {unreadCount > 0 && (
-              <button 
+              <button
                 onClick={markAllAsRead}
                 className="text-teal-600 hover:text-teal-800 font-medium text-sm"
               >
                 Mark all as read
               </button>
             )}
-            <button 
+            <button
               onClick={fetchNotifications}
               className="text-teal-600 hover:text-teal-800 font-medium text-sm"
             >
@@ -206,7 +207,7 @@ const Notification: React.FC = () => {
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
             <ul className="divide-y divide-gray-200">
               {notifications.map((notification) => (
-                <li 
+                <li
                   key={notification.id}
                   className={`${notification.read ? 'bg-white' : 'bg-teal-50'} 
                     ${markingRead === notification.id ? 'animate-pulse' : ''} 
@@ -228,8 +229,8 @@ const Notification: React.FC = () => {
                         <div className="mt-3 flex items-center justify-between">
                           <div className="flex space-x-4">
                             {notification.actionUrl && (
-                              <Link 
-                                to={notification.actionUrl} 
+                              <Link
+                                to={notification.actionUrl}
                                 className="inline-flex items-center text-sm font-medium text-teal-600 hover:text-teal-800"
                               >
                                 <span>View details</span>

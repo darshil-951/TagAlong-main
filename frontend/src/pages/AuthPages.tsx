@@ -38,13 +38,10 @@ export const LoginPage: React.FC = () => {
     setError(null);
 
     try {
-      const success = await login(formData.email, formData.password, rememberMe);
-      if (success) {
-        // Get the current user from context after successful login
-        const { currentUser } = useAuth();
-        
+      const result = await login(formData.email, formData.password, rememberMe);
+      if (result.success) {
         // Check if user is admin and redirect accordingly
-        if (currentUser?.role === 'admin') {
+        if (result.isAdmin) {
           navigate('/admin');
         } else {
           navigate('/');
@@ -60,12 +57,12 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link to="/" className="flex justify-center">
           <LogIn className="h-12 w-12 text-teal-500" />
         </Link>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
           Sign in to your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
@@ -105,7 +102,7 @@ export const LoginPage: React.FC = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="pl-10 block w-full py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                  className="pl-10 block w-full py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                 />
               </div>
             </div>
@@ -126,7 +123,7 @@ export const LoginPage: React.FC = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="pl-10 block w-full py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                  className="pl-10 block w-full py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                 />
               </div>
             </div>
@@ -178,7 +175,7 @@ export const LoginPage: React.FC = () => {
               <div>
                 <a
                   href="#"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <span className="sr-only">Sign in with Google</span>
                   <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
@@ -190,7 +187,7 @@ export const LoginPage: React.FC = () => {
               <div>
                 <a
                   href="#"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <span className="sr-only">Sign in with Facebook</span>
                   <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
@@ -256,12 +253,12 @@ export const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link to="/" className="flex justify-center">
           <UserPlus className="h-12 w-12 text-teal-500" />
         </Link>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
           Create your account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
@@ -301,7 +298,7 @@ export const SignupPage: React.FC = () => {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="pl-10 block w-full py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                  className="pl-10 block w-full py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                 />
               </div>
             </div>
@@ -322,7 +319,7 @@ export const SignupPage: React.FC = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="pl-10 block w-full py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                  className="pl-10 block w-full py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                 />
               </div>
             </div>
@@ -343,7 +340,7 @@ export const SignupPage: React.FC = () => {
                   required
                   value={formData.phone}
                   onChange={handleChange}
-                  className="pl-10 block w-full py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                  className="pl-10 block w-full py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                 />
               </div>
             </div>
@@ -364,7 +361,7 @@ export const SignupPage: React.FC = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="pl-10 block w-full py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                  className="pl-10 block w-full py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                   minLength={8}
                 />
               </div>
@@ -418,7 +415,7 @@ export const SignupPage: React.FC = () => {
               <div>
                 <a
                   href="#"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <span className="sr-only">Sign up with Google</span>
                   <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
@@ -430,7 +427,7 @@ export const SignupPage: React.FC = () => {
               <div>
                 <a
                   href="#"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <span className="sr-only">Sign up with Facebook</span>
                   <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">

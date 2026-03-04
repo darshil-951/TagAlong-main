@@ -51,11 +51,11 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
   };
 
   return (
-    <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 ${className}`}>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="relative">
-            <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="source" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               
             </label>
             <div className="relative">
@@ -71,7 +71,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
           </div>
 
           <div className="relative">
-            <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="destination" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               
             </label>
             <div className="relative">
@@ -87,7 +87,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
           </div>
 
           <div className="relative lg:col-span-1 md:col-span-2">
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               When
             </label>
             <div className="relative">
@@ -121,7 +121,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
         {showAdvanced && (
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="productType" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="productType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Product Type
               </label>
               <div className="relative">
@@ -141,7 +141,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
             </div>
 
             <div>
-              <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="weight" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Weight (kg)
               </label>
               <input
@@ -156,7 +156,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
             </div>
 
             <div>
-              <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Delivery Speed
               </label>
               <select

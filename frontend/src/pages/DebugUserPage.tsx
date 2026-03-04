@@ -8,7 +8,7 @@ const DebugUserPage: React.FC = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">User Debug Information</h1>
       
-      <div className="bg-gray-100 p-4 rounded">
+      <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded">
         <p><strong>Is Authenticated:</strong> {isAuthenticated ? 'Yes' : 'No'}</p>
         <p><strong>User Role:</strong> {currentUser?.role || 'Not available'}</p>
         <pre className="bg-gray-200 p-2 mt-4 rounded overflow-auto">

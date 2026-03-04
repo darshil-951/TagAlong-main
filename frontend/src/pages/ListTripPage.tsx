@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LocationAutocomplete from '../components/LocationAutocomplete';
 import { Calendar, Truck, PackageCheck, Box, Upload, UserCheck, IndianRupee, Timer, FileText, Search } from 'lucide-react';
+import { getApiEndpoint } from '../utils/api';
 const transportModes = [
   { value: 'car', label: 'Car' },
   { value: 'bike', label: 'Bike' },
@@ -71,7 +72,7 @@ const ListTripPage: React.FC = () => {
       const formData = new FormData();
       formData.append('aadhaar', e.target.files[0]);
       try {
-        const res = await fetch('/api/trip/ocr/aadhaar', { method: 'POST', body: formData });
+        const res = await fetch(getApiEndpoint('/api/trip/ocr/aadhaar'), { method: 'POST', body: formData });
         const data = await res.json();
         if (data.aadhaarNumber) {
           setAadhaarNumber(data.aadhaarNumber);
@@ -159,8 +160,8 @@ const ListTripPage: React.FC = () => {
       description,
       images: []
     };
-  
-    const res = await fetch('/api/trip/trips', {
+
+    const res = await fetch(getApiEndpoint('/api/trip/trips'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -168,7 +169,7 @@ const ListTripPage: React.FC = () => {
       },
       body: JSON.stringify(tripData)
     });
-  
+
     if (res.ok) {
       alert('Trip listed successfully!');
       // Optionally redirect or reset form
@@ -179,59 +180,59 @@ const ListTripPage: React.FC = () => {
   };
 
   return (
-    
-   
-    <div className="min-h-screen bg-gray-50 pt-20 pb-12">
-            
-      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6 text-left">List Your Trip</h1>
+
+
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-12">
+
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-left">List Your Trip</h1>
         <div className="flex justify-center mb-8">
           <div className="flex items-center space-x-4">
             <div className={`w-8 h-8 flex items-center justify-center rounded-full border-2 ${step >= 1 ? 'border-teal-500 bg-teal-500 text-white' : 'border-gray-300 bg-white text-gray-400'}`}>
               <UserCheck size={18} />
             </div>
             <div className=" bg-gray-50 pt-20 pb-12">
-    {/* Toast Notification */}
-    {showToast && (
-      <div
-        style={{
-          position: 'fixed',
-          top: 24,
-          right: 24,
-          background: '#14b8a6',
-          color: 'white',
-          padding: '12px 24px',
-          borderRadius: 6,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          zIndex: 9999,
-          display: 'flex',
-          alignItems: 'center',
-          minWidth: 180,
-          fontWeight: 500,
-        }}
-      >
-        <span style={{ flex: 1 }}>Your OTP is: {generatedOtp}</span>
-        <button
-          onClick={handleCloseToast}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'white',
-            fontSize: 18,
-            marginLeft: 12,
-            cursor: 'pointer',
-            lineHeight: 1,
-          }}
-          aria-label="Close"
-        >
-          ×
-        </button>
-      </div>
-    )}
-    {/* ... existing code ... */}
-  </div>
+              {/* Toast Notification */}
+              {showToast && (
+                <div
+                  style={{
+                    position: 'fixed',
+                    top: 24,
+                    right: 24,
+                    background: '#14b8a6',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: 6,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    minWidth: 180,
+                    fontWeight: 500,
+                  }}
+                >
+                  <span style={{ flex: 1 }}>Your OTP is: {generatedOtp}</span>
+                  <button
+                    onClick={handleCloseToast}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'white',
+                      fontSize: 18,
+                      marginLeft: 12,
+                      cursor: 'pointer',
+                      lineHeight: 1,
+                    }}
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+              {/* ... existing code ... */}
+            </div>
 
- 
+
             <div className={`h-1 w-8 ${step > 1 ? 'bg-teal-500' : 'bg-gray-200'}`}></div>
             <div className={`w-8 h-8 flex items-center justify-center rounded-full border-2 ${step >= 2 ? 'border-teal-500 bg-teal-500 text-white' : 'border-gray-300 bg-white text-gray-400'}`}>
               <Truck size={18} />
@@ -251,7 +252,7 @@ const ListTripPage: React.FC = () => {
                 <UserCheck size={20} className="mr-2" />Aadhaar Verification (with OTP)
               </h2>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Upload Aadhaar Image or PDF
                 </label>
                 <input
@@ -295,14 +296,14 @@ const ListTripPage: React.FC = () => {
                   )}
                   {otpSent && !otpVerified && (
                     <div className="mt-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Enter OTP sent to {aadhaarPhone}
                       </label>
                       <input
                         type="text"
                         value={otp}
                         onChange={e => setOtp(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                         maxLength={6}
                         required
                       />
@@ -342,44 +343,44 @@ const ListTripPage: React.FC = () => {
               <h2 className="text-xl font-semibold mb-4 flex items-center"><Truck size={20} className="mr-2" />Trip Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                 <div>
-                  {/* <label className="block text-sm font-medium text-gray-700 mb-1">From</label> */}
+                  {/* <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">From</label> */}
                   <LocationAutocomplete
-                  id="source"
-                  label="From"
-                  value={source}
-                  onChange={setSource}
-                  required
-                  icon={<Search size={18} />}
-                />
+                    id="source"
+                    label="From"
+                    value={source}
+                    onChange={setSource}
+                    required
+                    icon={<Search size={18} />}
+                  />
                 </div>
                 <div>
-                  {/* <label className="block text-sm font-medium text-gray-700 mb-1">To</label> */}
+                  {/* <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">To</label> */}
                   <LocationAutocomplete
-                  id="destination"
-                  label="To"
-                  value={destination}
-                  onChange={setDestination}
-                  required
-                  icon={<Search size={18} />}
-                />
+                    id="destination"
+                    label="To"
+                    value={destination}
+                    onChange={setDestination}
+                    required
+                    icon={<Search size={18} />}
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center">
                     <Calendar size={16} className="mr-1" />Date of Journey
                   </label>
                   <input
                     type="date"
                     value={departureDate}
                     onChange={e => setDepartureDate(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                     required
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center">
                     <Timer size={16} className="mr-1" />Duration (hours)
                   </label>
                   <input
@@ -388,18 +389,18 @@ const ListTripPage: React.FC = () => {
                     max={168}
                     value={duration}
                     onChange={e => setDuration(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                     required
                   />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Means of Transport</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Means of Transport</label>
                   <select
                     value={transport}
                     onChange={e => setTransport(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                     required
                   >
                     <option value="">Select</option>
@@ -424,7 +425,7 @@ const ListTripPage: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center">
                     <PackageCheck size={16} className="mr-1" />Capacity (Weight in kg)
                   </label>
                   <input
@@ -433,12 +434,12 @@ const ListTripPage: React.FC = () => {
                     max={1000}
                     value={capacityWeight}
                     onChange={e => setCapacityWeight(Number(e.target.value))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center">
                     <Box size={16} className="mr-1" />Capacity (Volume in m³)
                   </label>
                   <input
@@ -447,13 +448,13 @@ const ListTripPage: React.FC = () => {
                     max={100}
                     value={capacityVolume}
                     onChange={e => setCapacityVolume(Number(e.target.value))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                     required
                   />
                 </div>
               </div>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category of Goods</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category of Goods</label>
                 <div className="flex flex-wrap gap-2">
                   {categories.map(cat => (
                     <button
@@ -493,7 +494,7 @@ const ListTripPage: React.FC = () => {
               <h2 className="text-xl font-semibold mb-4 flex items-center"><FileText size={20} className="mr-2" />Identification & Cost</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center">
                     <Upload size={16} className="mr-1" />Upload Latest Photo for Identification
                   </label>
                   <input
@@ -505,7 +506,7 @@ const ListTripPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center">
                     <IndianRupee size={16} className="mr-1" />Cost of Service (in ₹)
                   </label>
                   <input
@@ -513,16 +514,16 @@ const ListTripPage: React.FC = () => {
                     min={0}
                     value={price}
                     onChange={e => setPrice(Number(e.target.value))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Trip Description</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Trip Description</label>
                   <textarea
                     value={description}
                     onChange={e => setDescription(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
                     placeholder="Describe your trip, special instructions, etc."
                     rows={4}
                   />

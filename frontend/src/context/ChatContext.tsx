@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { io, Socket } from 'socket.io-client';
 import { Message, Chat, User } from '../types';
 import { useAuth } from './AuthContext';
+import { getSocketUrl, getApiEndpoint } from '../utils/api';
 
 interface ChatContextType {
   messages: Record<string, Message[]>;
@@ -34,7 +35,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (!currentUser) return;
     
-    const newSocket = io('http://localhost:5000', {
+    const newSocket = io(getSocketUrl(), {
       query: { userId: currentUser._id }
     });
     
@@ -112,7 +113,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!currentUser) return; // Add this null check
       
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      await fetch('/api/notifications', {
+      await fetch(getApiEndpoint('/api/notifications'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -208,7 +209,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch('/api/chat/upload-image', {
+      const response = await fetch(getApiEndpoint('/api/chat/upload-image'), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getApiEndpoint } from '../utils/api';
 
 const AdminLoginPage: React.FC = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -27,14 +28,14 @@ const AdminLoginPage: React.FC = () => {
         // We need to fetch the user data again to get the updated role
         const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
         const userId = localStorage.getItem('tagalong-user-id') || sessionStorage.getItem('tagalong-user-id');
-        
+
         if (token && userId) {
-          const response = await fetch(`/api/users/${userId}`, {
+          const response = await fetch(getApiEndpoint(`/api/users/${userId}`), {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           });
-          
+
           if (response.ok) {
             const userData = await response.json();
             if (userData.role === 'admin') {
@@ -43,7 +44,7 @@ const AdminLoginPage: React.FC = () => {
             }
           }
         }
-        
+
         // If we get here, either the user is not an admin or there was an error
         setError('You do not have admin privileges.');
       } else {
@@ -60,7 +61,7 @@ const AdminLoginPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Admin Login</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">Admin Login</h2>
         </div>
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, User, Edit, LogOut, ShieldCheck } from 'lucide-react';
+import { getApiEndpoint, getUploadUrl } from '../utils/api';
 
 const ProfilePage: React.FC = () => {
   useEffect(() => {
@@ -23,7 +24,7 @@ const ProfilePage: React.FC = () => {
       formData.append('avatar', file);
 
       // Upload to backend
-      const response = await fetch('http://localhost:5000/api/users/avatar', {
+      const response = await fetch(getApiEndpoint('/api/users/avatar'), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('tagalong-token')}`
@@ -40,9 +41,9 @@ const ProfilePage: React.FC = () => {
 
   if (!currentUser) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] bg-gradient-to-br from-teal-50 via-white to-blue-50">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] bg-gradient-to-br from-teal-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="bg-white/90 shadow-2xl rounded-3xl p-10 text-center border border-teal-100">
-          <p className="text-lg text-gray-700 mb-4">You are not logged in.</p>
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">You are not logged in.</p>
           <Link
             to="/login"
             className="inline-block bg-gradient-to-r from-teal-500 to-blue-500 text-white px-8 py-2 rounded-xl font-semibold shadow-lg hover:from-teal-600 hover:to-blue-600 transition"
@@ -66,7 +67,7 @@ const ProfilePage: React.FC = () => {
             <div className="relative">
               <span className="absolute -inset-1 rounded-full bg-gradient-to-tr from-teal-400 to-blue-400 opacity-30 blur"></span>
               <img
-                src={avatarPreview || (currentUser.avatar ? currentUser.avatar : `http://localhost:5000/uploads/avatars/${currentUser.id}.jpg`)}
+                src={avatarPreview || (currentUser.avatar ? currentUser.avatar : getUploadUrl(`/uploads/avatars/${currentUser.id}.jpg`))}
                 alt={currentUser.name}
                 className="w-36 h-36 rounded-full object-cover border-4 border-teal-200 shadow-xl relative z-10"
               />
@@ -86,7 +87,7 @@ const ProfilePage: React.FC = () => {
                 </span>
               )}
             </div>
-            <h2 className="mt-5 text-3xl font-extrabold text-gray-900">{currentUser.name}</h2>
+            <h2 className="mt-5 text-3xl font-extrabold text-gray-900 dark:text-white">{currentUser.name}</h2>
             <span className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-teal-100 to-blue-100 text-teal-700 border border-teal-200 shadow">
               {currentUser.role || 'User'}
             </span>

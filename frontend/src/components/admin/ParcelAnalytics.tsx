@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Chart, Doughnut, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { gsap } from 'gsap';
+import { getApiEndpoint } from '../../utils/api';
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
@@ -18,21 +19,21 @@ const ParcelAnalytics: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ParcelAnalyticsData | null>(null);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-        const response = await fetch('/api/admin/analytics/parcels', {
+        const response = await fetch(getApiEndpoint('/api/admin/analytics/parcels'), {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch parcel analytics');
         }
-        
+
         const analyticsData = await response.json();
         setData(analyticsData);
       } catch (err: any) {
@@ -41,7 +42,7 @@ const ParcelAnalytics: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, []);
 
@@ -66,34 +67,34 @@ const ParcelAnalytics: React.FC = () => {
       });
     }
   }, [loading, error, data]);
-  
+
   if (loading) return <div className="flex justify-center items-center h-full">Loading analytics...</div>;
   if (error) return <div className="text-red-500">Error: {error}</div>;
   if (!data) return <div>No data available</div>;
-  
+
   // Prepare data for status chart
   const statusLabels = data.parcelsByStatus.map(item => item._id);
   const statusData = data.parcelsByStatus.map(item => item.count);
-  
+
   // Prepare data for category chart
   const categoryLabels = data.parcelsByCategory.map(item => item._id);
   const categoryData = data.parcelsByCategory.map(item => item.count);
-  
+
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Parcel Analytics</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="analytics-card bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-500 mb-2">Total Parcels</h3>
           <p className="text-4xl font-bold">{data.totalParcels}</p>
         </div>
-        
+
         <div className="analytics-card bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-500 mb-2">Average Weight</h3>
           <p className="text-4xl font-bold">{data.avgParcelWeight.toFixed(2)} kg</p>
         </div>
-        
+
         <div className="analytics-card bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-500 mb-2">Payment Pending</h3>
           <p className="text-4xl font-bold">
@@ -101,12 +102,12 @@ const ParcelAnalytics: React.FC = () => {
           </p>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="chart-container bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold mb-4">Parcels by Status</h3>
           <div className="h-80">
-            <Doughnut 
+            <Doughnut
               data={{
                 labels: statusLabels,
                 datasets: [{
@@ -130,7 +131,7 @@ const ParcelAnalytics: React.FC = () => {
             />
           </div>
         </div>
-        
+
         <div className="chart-container bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold mb-4">Parcels by Category</h3>
           <div className="h-80">

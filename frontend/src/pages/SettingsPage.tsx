@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Switch } from '@headlessui/react';
 import { Link } from 'react-router-dom';
-import { Bell, Globe, Lock, Trash, Mail, Phone, Edit, Check, X } from 'lucide-react';
+import { Bell, Lock, Trash, Mail, Phone, Edit, Check, X, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { getApiEndpoint } from '../utils/api';
+import { useTheme } from '../context/ThemeContext';
 
 const SettingsPage: React.FC = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [language, setLanguage] = useState('English');
+  const { isDark, toggleTheme } = useTheme();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
@@ -29,7 +31,7 @@ const SettingsPage: React.FC = () => {
   const handleSaveEmail = async () => {
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch('/api/users/update-email', {
+      const response = await fetch(getApiEndpoint('/api/users/update-email'), {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +53,7 @@ const SettingsPage: React.FC = () => {
   const handleSavePhone = async () => {
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch('/api/users/update-phone', {
+      const response = await fetch(getApiEndpoint('/api/users/update-phone'), {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +75,7 @@ const SettingsPage: React.FC = () => {
   const handlePasswordChange = async () => {
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch('/api/users/change-password', {
+      const response = await fetch(getApiEndpoint('/api/users/change-password'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +94,7 @@ const SettingsPage: React.FC = () => {
   const handleDeleteAccount = async () => {
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch('/api/users/delete-account', {
+      const response = await fetch(getApiEndpoint('/api/users/delete-account'), {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -109,15 +111,15 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50 py-20">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4 text-center font-sans"><u>Settings</u></h1>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center font-sans"><u>Settings</u></h1>
 
-        <div className="bg-white shadow-lg rounded-lg p-8">
+        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8">
           <div className="space-y-6">
             {/* Email */}
             <div className="flex justify-between items-center">
-              <span className="flex items-center text-lg font-medium text-gray-700">
+              <span className="flex items-center text-lg font-medium text-gray-700 dark:text-gray-300">
                 <Mail className="mr-2" /> Email
               </span>
               <div className="flex items-center">
@@ -149,7 +151,7 @@ const SettingsPage: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <span className="text-gray-700 mr-2">{email}</span>
+                    <span className="text-gray-700 dark:text-gray-300 mr-2">{email}</span>
                     <button
                       onClick={() => setEditingEmail(true)}
                       className="text-teal-500 hover:text-teal-600 transition"
@@ -163,7 +165,7 @@ const SettingsPage: React.FC = () => {
             </div>
             {/* Phone */}
             <div className="flex justify-between items-center">
-              <span className="flex items-center text-lg font-medium text-gray-700">
+              <span className="flex items-center text-lg font-medium text-gray-700 dark:text-gray-300">
                 <Phone className="mr-2" /> Phone Number
               </span>
               <div className="flex items-center">
@@ -195,7 +197,7 @@ const SettingsPage: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <span className="text-gray-700 mr-2">{phoneNumber}</span>
+                    <span className="text-gray-700 dark:text-gray-300 mr-2">{phoneNumber}</span>
                     <button
                       onClick={() => setEditingPhone(true)}
                       className="text-teal-500 hover:text-teal-600 transition"
@@ -209,33 +211,32 @@ const SettingsPage: React.FC = () => {
             </div>
             {/* Change Password */}
             <div className="flex justify-between items-center">
-              <span className="flex items-center text-lg font-medium text-gray-700">
+              <span className="flex items-center text-lg font-medium text-gray-700 dark:text-gray-300">
                 <Lock className="mr-2" /> Change Password
               </span>
               <button
                 onClick={() => setShowPasswordChange(!showPasswordChange)}
-                className={`px-4 py-2 rounded-md transition ${
-                  showPasswordChange ? 'bg-red-500 hover:bg-red-600' : 'bg-teal-500 hover:bg-teal-600'
-                } text-white`}
+                className={`px-4 py-2 rounded-md transition ${showPasswordChange ? 'bg-red-500 hover:bg-red-600' : 'bg-teal-500 hover:bg-teal-600'
+                  } text-white`}
               >
                 {showPasswordChange ? 'Hide' : 'Show'} Change Password
               </button>
             </div>
             {showPasswordChange && (
-              <div className="bg-gray-100 p-4 rounded-md shadow-inner">
+              <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md shadow-inner">
                 <input
                   type="password"
                   placeholder="Old Password"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="bg-white border border-gray-300 text-gray-700 text-sm rounded-md focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 mb-2"
+                  className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-md focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 mb-2"
                 />
                 <input
                   type="password"
                   placeholder="New Password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="bg-white border border-gray-300 text-gray-700 text-sm rounded-md focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 mb-2"
+                  className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-md focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 mb-2"
                 />
                 <button
                   onClick={handlePasswordChange}
@@ -253,14 +254,29 @@ const SettingsPage: React.FC = () => {
               <Switch
                 checked={notificationsEnabled}
                 onChange={setNotificationsEnabled}
-                className={`${
-                  notificationsEnabled ? 'bg-teal-500' : 'bg-gray-200'
-                } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none`}
+                className={`${notificationsEnabled ? 'bg-teal-500' : 'bg-gray-200'
+                  } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none`}
               >
                 <span
-                  className={`${
-                    notificationsEnabled ? 'translate-x-6' : 'translate-x-1'
-                  } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+                  className={`${notificationsEnabled ? 'translate-x-6' : 'translate-x-1'
+                    } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+                />
+              </Switch>
+            </div>
+            {/* Dark Mode */}
+            <div className="flex justify-between items-center">
+              <span className="flex items-center text-lg font-medium text-gray-700 dark:text-gray-300">
+                {isDark ? <Moon className="mr-2" /> : <Sun className="mr-2" />} Dark Mode
+              </span>
+              <Switch
+                checked={isDark}
+                onChange={toggleTheme}
+                className={`${isDark ? 'bg-teal-500' : 'bg-gray-200'
+                  } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none`}
+              >
+                <span
+                  className={`${isDark ? 'translate-x-6' : 'translate-x-1'
+                    } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
                 />
               </Switch>
             </div>
@@ -293,7 +309,7 @@ const SettingsPage: React.FC = () => {
               </button>
             </div>
             {showDeleteConfirm && (
-              <div className="bg-red-50 p-4 rounded-md shadow-inner flex flex-col items-center">
+              <div className="bg-red-50 dark:bg-red-900/30 p-4 rounded-md shadow-inner flex flex-col items-center">
                 <input
                   type="password"
                   placeholder="Enter your password to confirm"

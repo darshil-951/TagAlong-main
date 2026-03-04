@@ -69,35 +69,35 @@ const HeroSection: React.FC = () => {
         
 
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          <div className="feature-item bg-white rounded-lg shadow-md p-6 border-t-4 border-teal-500 hover:shadow-lg transition-shadow">
+          <div className="feature-item bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-t-4 border-teal-500 hover:shadow-lg transition-shadow">
             <div className="rounded-full w-12 h-12 bg-teal-100 flex items-center justify-center mb-4">
               <Truck className="h-6 w-6 text-teal-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Efficient Delivery</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Efficient Delivery</h3>
             <p className="text-gray-600">Utilize existing travel routes for faster, more efficient deliveries.</p>
           </div>
           
-          <div className="feature-item bg-white rounded-lg shadow-md p-6 border-t-4 border-blue-500 hover:shadow-lg transition-shadow">
+          <div className="feature-item bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-t-4 border-blue-500 hover:shadow-lg transition-shadow">
             <div className="rounded-full w-12 h-12 bg-blue-100 flex items-center justify-center mb-4">
               <TrendingUp className="h-6 w-6 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Cost Effective</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Cost Effective</h3>
             <p className="text-gray-600">Save up to 60% compared to traditional shipping methods.</p>
           </div>
           
-          <div className="feature-item bg-white rounded-lg shadow-md p-6 border-t-4 border-orange-500 hover:shadow-lg transition-shadow">
+          <div className="feature-item bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-t-4 border-orange-500 hover:shadow-lg transition-shadow">
             <div className="rounded-full w-12 h-12 bg-orange-100 flex items-center justify-center mb-4">
               <Package className="h-6 w-6 text-orange-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Flexible Options</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Flexible Options</h3>
             <p className="text-gray-600">From small packages to larger items, find the right match for your needs.</p>
           </div>
           
-          <div className="feature-item bg-white rounded-lg shadow-md p-6 border-t-4 border-indigo-500 hover:shadow-lg transition-shadow">
+          <div className="feature-item bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-t-4 border-indigo-500 hover:shadow-lg transition-shadow">
             <div className="rounded-full w-12 h-12 bg-indigo-100 flex items-center justify-center mb-4">
               <Shield className="h-6 w-6 text-indigo-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Safe & Secure</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Safe & Secure</h3>
             <p className="text-gray-600">Verified profiles, ratings, and secure payments for peace of mind.</p>
           </div>
         </div>

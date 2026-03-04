@@ -269,13 +269,13 @@ const ChatPage: React.FC = () => {
 
   return (
     <div ref={pageRef} className="container mx-auto px-5 py-20 max-w-6xl pt-15 "> {/* Increased top padding */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         <div className="flex h-[83vh]">
           {/* Chat List - Show on mobile only when showChatList is true */}
           <div 
             className={`${showChatList ? 'block' : 'hidden'} md:block w-full md:w-1/3 border-r border-gray-200`}
           >
-            <div className="p-4 border-b border-gray-200 ">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700 ">
               <h2 className="text-xl font-semibold flex items-center pt-50">
                 <MessageSquare className="mr-2" size={20} />
                 Messages
@@ -284,7 +284,7 @@ const ChatPage: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search conversations..."
-                  className="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full p-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -301,7 +301,7 @@ const ChatPage: React.FC = () => {
                   return (
                     <div 
                       key={chat.user?._id}
-                      className={`p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors ${activeChat === otherParticipantId ? 'bg-teal-50' : ''}`}
+                      className={`p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 cursor-pointer transition-colors ${activeChat === otherParticipantId ? 'bg-teal-50' : ''}`}
                       onClick={() => handleChatSelect(otherParticipantId || '')}
                     >
                       <div className="flex items-start">
@@ -348,7 +348,7 @@ const ChatPage: React.FC = () => {
             {activeChat ? (
               <>
                 {/* Chat Header */}
-                <div className="p-4 border-b border-gray-200 flex items-center">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center">
                   <button 
                     className="md:hidden mr-2 text-gray-600"
                     onClick={handleBackToList}
@@ -461,12 +461,12 @@ const ChatPage: React.FC = () => {
                 </div>
                 
                 {/* Chat Input */}
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex items-end">
                     <div className="flex-1 relative">
                       <textarea
                         placeholder="Type a message..."
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
                         rows={1}
                         value={messageInput}
                         onChange={handleInputChange}

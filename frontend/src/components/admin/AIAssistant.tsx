@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getApiEndpoint } from '../../utils/api';
 
 interface Message {
   id: string;
@@ -16,11 +17,11 @@ const AIAssistant: React.FC = () => {
     timestamp: new Date()
   }]);
   const [loading, setLoading] = useState(false);
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    
+
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -28,13 +29,13 @@ const AIAssistant: React.FC = () => {
       sender: 'user',
       timestamp: new Date()
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setLoading(true);
-    
+
     try {
       const token = localStorage.getItem('tagalong-token') || sessionStorage.getItem('tagalong-token');
-      const response = await fetch('/api/admin/ai/query', {
+      const response = await fetch(getApiEndpoint('/api/admin/ai/query'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,13 +43,13 @@ const AIAssistant: React.FC = () => {
         },
         body: JSON.stringify({ query })
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to get AI response');
       }
-      
+
       const data = await response.json();
-      
+
       // Add AI response
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -56,7 +57,7 @@ const AIAssistant: React.FC = () => {
         sender: 'ai',
         timestamp: new Date()
       };
-      
+
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       // Add error message
@@ -66,28 +67,28 @@ const AIAssistant: React.FC = () => {
         sender: 'ai',
         timestamp: new Date()
       };
-      
+
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setLoading(false);
       setQuery('');
     }
   };
-  
+
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">AI Assistant</h2>
-      
+
       <div className="bg-white rounded-lg shadow h-[600px] flex flex-col">
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map(message => (
-            <div 
-              key={message.id} 
+            <div
+              key={message.id}
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div 
-                className={`max-w-[70%] rounded-lg p-3 ${message.sender === 'user' 
-                  ? 'bg-blue-600 text-white' 
+              <div
+                className={`max-w-[70%] rounded-lg p-3 ${message.sender === 'user'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-800'}`}
               >
                 <p>{message.text}</p>
@@ -97,10 +98,10 @@ const AIAssistant: React.FC = () => {
               </div>
             </div>
           ))}
-          
+
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-gray-100 rounded-lg p-3 flex space-x-2">
+              <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 flex space-x-2">
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></div>
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></div>
@@ -108,7 +109,7 @@ const AIAssistant: React.FC = () => {
             </div>
           )}
         </div>
-        
+
         <form onSubmit={handleSubmit} className="border-t p-4">
           <div className="flex space-x-2">
             <input

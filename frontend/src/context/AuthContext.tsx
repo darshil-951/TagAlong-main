@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
+import { getApiEndpoint } from '../utils/api';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -22,7 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userId = localStorage.getItem('tagalong-user-id') || sessionStorage.getItem('tagalong-user-id');
     if (token && userId) {
       setIsAuthenticated(true);
-      fetch(`/api/users/${userId}`, {
+      fetch(getApiEndpoint(`/api/users/${userId}`), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -52,7 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Add rememberMe parameter
   const login = async (email: string, password: string, rememberMe: boolean = false): Promise<{success: boolean; isAdmin: boolean}> => {
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(getApiEndpoint('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -95,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     phone: string
   ): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(getApiEndpoint('/api/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, phone }),

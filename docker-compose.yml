@@ -1,0 +1,50 @@
+# Docker Compose Configuration for TagAlong
+# Run: docker-compose up -d
+# Stop: docker-compose down
+
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../Dockerfile.backend
+    container_name: tagalong-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+    volumes:
+      - ./backend/uploads:/app/uploads
+    restart: unless-stopped
+    networks:
+      - tagalong-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../Dockerfile.frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+        - VITE_STRIPE_PUBLISHABLE_KEY=${VITE_STRIPE_PUBLISHABLE_KEY}
+        - VITE_SOCKET_URL=${VITE_SOCKET_URL}
+    container_name: tagalong-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - tagalong-network
+
+networks:
+  tagalong-network:
+    driver: bridge
+
