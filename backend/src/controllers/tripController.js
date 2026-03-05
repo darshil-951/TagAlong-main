@@ -40,7 +40,7 @@ exports.aadhaarOcr = async (req, res) => {
     }
 
     // Clean up uploaded file
-    fs.unlink(req.file.path, () => {});
+    fs.unlink(req.file.path, () => { });
 
     if (!aadhaarNumber) {
       return res.json({ error: 'Could not extract Aadhaar number. Please upload a clear image or PDF.' });
@@ -119,7 +119,13 @@ exports.getMyTrips = async (req, res) => {
 };
 exports.getAllTrips = async (req, res) => {
   try {
-    const trips = await Trip.find().sort({ createdAt: -1 }).populate('user', 'name avatar rating');
+    // Only return trips whose departure date is today or in the future
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const trips = await Trip.find({
+      departureDate: { $gte: today }
+    }).sort({ departureDate: 1 }).populate('user', 'name avatar rating');
     res.json({ trips });
   } catch (err) {
     res.status(500).json({ error: err.message });

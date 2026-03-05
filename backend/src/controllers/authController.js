@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { createSystemNotification } = require('../utils/notificationHelper');
 
 // Register a new user
 exports.register = async (req, res) => {
@@ -15,6 +16,18 @@ exports.register = async (req, res) => {
 
     // Create JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    // Send welcome notification
+    try {
+      await createSystemNotification(
+        user._id,
+        'Welcome to TagAlong! 🎉',
+        `Hi ${name}, welcome aboard! Start by listing a trip or searching for carriers to send your parcels.`,
+        '/search'
+      );
+    } catch (notifErr) {
+      console.error('Failed to send welcome notification:', notifErr);
+    }
 
     // Remove password from user object before sending
     const userObj = user.toObject();

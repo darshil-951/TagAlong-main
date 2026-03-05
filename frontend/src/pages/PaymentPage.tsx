@@ -128,7 +128,7 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
+        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
           Card Details
         </label>
         <div className="p-3 border border-gray-300 dark:border-gray-600 rounded">
@@ -157,8 +157,8 @@ const CheckoutForm = ({ parcelId, amount }: { parcelId: string, amount: number }
         type="submit"
         disabled={!stripe || processing || succeeded}
         className={`w-full py-2 px-4 rounded font-bold ${processing || succeeded || !stripe
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-teal-500 hover:bg-teal-600 text-white'
+          ? 'bg-gray-400 cursor-not-allowed'
+          : 'bg-teal-500 hover:bg-teal-600 text-white'
           }`}
       >
         {processing ? 'Processing...' : succeeded ? 'Payment Successful!' : `Pay ₹${amount}`}
@@ -193,13 +193,13 @@ const PaymentPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-12">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-gray-900 text-center">Complete Your Payment</h1>
+        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white text-center">Complete Your Payment</h1>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
           <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">Payment Details</h2>
-              <p className="text-gray-600">Secure payment processing by Stripe</p>
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Payment Details</h2>
+              <p className="text-gray-600 dark:text-gray-400">Secure payment processing by Stripe</p>
             </div>
             <div className="text-2xl font-bold text-teal-600">₹{parcelData.amount / 2}</div>
           </div>

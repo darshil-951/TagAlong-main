@@ -5,7 +5,7 @@ import LocationAutocomplete from './LocationAutocomplete';
 interface SearchFormProps {
   onSearch: (params: SearchParams) => void;
   className?: string;
-  initialValues?: Partial<SearchParams>; 
+  initialValues?: Partial<SearchParams>;
 }
 
 
@@ -56,7 +56,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="relative">
             <label htmlFor="source" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              
+
             </label>
             <div className="relative">
               <LocationAutocomplete
@@ -72,7 +72,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
 
           <div className="relative">
             <label htmlFor="destination" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              
+
             </label>
             <div className="relative">
               <LocationAutocomplete
@@ -96,7 +96,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
                 id="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="pl-10 w-full h-12 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="pl-10 w-full h-12 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 min={new Date().toISOString().split('T')[0]}
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -131,7 +131,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
                   placeholder="e.g., Electronics, Furniture, Clothes"
                   value={productType}
                   onChange={(e) => setProductType(e.target.value)}
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="pl-10 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   required
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -151,7 +151,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
                 max="100"
                 value={weight}
                 onChange={(e) => setWeight(Number(e.target.value))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               />
             </div>
 
@@ -163,7 +163,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
                 id="urgency"
                 value={urgency}
                 onChange={(e) => setUrgency(e.target.value as 'normal' | 'express')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               >
                 <option value="normal">Normal</option>
                 <option value="express">Express</option>
@@ -179,7 +179,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch, className = '' }) => 
                   onChange={(e) => setIsFragile(e.target.checked)}
                   className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
                 />
-                <label htmlFor="fragile" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="fragile" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                   <div className="flex items-center">
                     <PackageCheck size={18} className="mr-1 text-gray-500" />
                     Fragile Item

@@ -336,47 +336,46 @@ const SearchPage: React.FC = () => {
           {/* Sidebar Filters for Desktop */}
           <div className="hidden lg:block lg:w-1/4">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-24">
-              <div className="border-b pb-4 mb-4">
+              <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Price Range</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">${priceRange[0]}</span>
-                    <span className="text-gray-600">${priceRange[1]}</span>
+                    <span className="text-gray-600 dark:text-gray-400">₹{priceRange[0]}</span>
+                    <span className="text-gray-600 dark:text-gray-400">₹{priceRange[1]}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="min-price" className="block text-sm text-gray-600">Min</label>
+                      <label htmlFor="min-price" className="block text-sm text-gray-600 dark:text-gray-400">Min</label>
                       <input
                         type="number"
                         id="min-price"
                         min="0"
                         value={priceRange[0] ?? ''}
                         onChange={e => setPriceRange([e.target.value ? Number(e.target.value) : null, priceRange[1]])}
-                        className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                        className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                       />
                     </div>
                     <div>
-                      <label htmlFor="max-price" className="block text-sm text-gray-600">Max</label>
+                      <label htmlFor="max-price" className="block text-sm text-gray-600 dark:text-gray-400">Max</label>
                       <input
                         type="number"
                         id="max-price"
-                        min={0}
-                        max={priceRange[1] ?? ''}
-                        value={priceRange[0] ?? ''}
+                        min={priceRange[0] ?? 0}
+                        value={priceRange[1] ?? ''}
                         onChange={e => setPriceRange([priceRange[0], e.target.value ? Number(e.target.value) : null])}
-                        className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                        className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="border-b pb-4 mb-4">
+              <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Sort By</h3>
                 <select
                   value={sortOption}
                   onChange={handleSortChange}
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                 >
                   <option value="date_asc">Departure: Earliest First</option>
                   <option value="price_asc">Price: Low to High</option>
@@ -394,7 +393,7 @@ const SearchPage: React.FC = () => {
                 </button>
                 <button
                   onClick={resetFilters}
-                  className="w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 transition-colors"
+                  className="w-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   Reset Filters
                 </button>
@@ -406,7 +405,7 @@ const SearchPage: React.FC = () => {
           <div className="lg:hidden mb-4">
             <button
               onClick={toggleFilters}
-              className="flex items-center justify-center w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center w-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <Filter size={18} className="mr-2" />
               {showFilters ? 'Hide Filters' : 'Show Filters'}
@@ -415,16 +414,16 @@ const SearchPage: React.FC = () => {
             {/* Mobile Filters */}
             {showFilters && (
               <div className="mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                <div className="border-b pb-4 mb-4">
+                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Price Range</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">${priceRange[0]}</span>
-                      <span className="text-gray-600">${priceRange[1]}</span>
+                      <span className="text-gray-600 dark:text-gray-400">₹{priceRange[0]}</span>
+                      <span className="text-gray-600 dark:text-gray-400">₹{priceRange[1]}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="mobile-min-price" className="block text-sm text-gray-600">Min</label>
+                        <label htmlFor="mobile-min-price" className="block text-sm text-gray-600 dark:text-gray-400">Min</label>
                         <input
                           type="number"
                           id="mobile-min-price"
@@ -432,30 +431,30 @@ const SearchPage: React.FC = () => {
                           max={priceRange[1] ?? ''}
                           value={priceRange[0] ?? ''}
                           onChange={handlePriceChange}
-                          className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                          className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         />
                       </div>
                       <div>
-                        <label htmlFor="mobile-max-price" className="block text-sm text-gray-600">Max</label>
+                        <label htmlFor="mobile-max-price" className="block text-sm text-gray-600 dark:text-gray-400">Max</label>
                         <input
                           type="number"
                           id="mobile-max-price"
-                          min="0"
-                          value={priceRange[0] ?? ''}
-                          onChange={e => setPriceRange([e.target.value ? Number(e.target.value) : null, priceRange[1]])}
-                          className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                          min={priceRange[0] ?? 0}
+                          value={priceRange[1] ?? ''}
+                          onChange={e => setPriceRange([priceRange[0], e.target.value ? Number(e.target.value) : null])}
+                          className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                         />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-b pb-4 mb-4">
+                <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Sort By</h3>
                   <select
                     value={sortOption}
                     onChange={handleSortChange}
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+                    className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500"
                   >
                     <option value="date_asc">Departure: Earliest First</option>
                     <option value="price_asc">Price: Low to High</option>
@@ -473,7 +472,7 @@ const SearchPage: React.FC = () => {
                   </button>
                   <button
                     onClick={resetFilters}
-                    className="w-full bg-white text-gray-700 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 transition-colors"
+                    className="w-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                   >
                     Reset Filters
                   </button>
@@ -489,7 +488,7 @@ const SearchPage: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center">
                     <MapPin size={18} className="text-teal-500 mr-1" />
-                    <span className="text-gray-700">
+                    <span className="text-gray-700 dark:text-gray-300">
                       <span className="font-medium">{searchCriteria.source}</span>
                       <span className="mx-2">→</span>
                       <span className="font-medium">{searchCriteria.destination}</span>
