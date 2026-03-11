@@ -11,11 +11,21 @@ exports.getMyParcels = async (req, res) => {
         { carrier: req.user._id }
       ]
     })
+      .sort({ _id: -1 }) // Native Mongo ObjectId contains timestamp, sorting by _id perfectly sorts newest first even without createdAt
       .populate('trip')
       .populate('carrier')
       .populate('sender');
 
-    res.json(parcels);
+    // Backfill createdAt for older parcels that were created before the schema update
+    const formattedParcels = parcels.map(p => {
+      const pObj = p.toObject();
+      if (!pObj.createdAt) {
+        pObj.createdAt = p._id.getTimestamp();
+      }
+      return pObj;
+    });
+
+    res.json(formattedParcels);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

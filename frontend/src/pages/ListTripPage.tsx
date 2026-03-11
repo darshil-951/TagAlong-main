@@ -253,11 +253,11 @@ const ListTripPage: React.FC = () => {
               </h2>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Upload Aadhaar Image or PDF
+                  Upload Aadhaar Image (JPG/PNG)
                 </label>
                 <input
                   type="file"
-                  accept="image/*,application/pdf"
+                  accept="image/*"
                   onChange={handleAadhaarFileChange}
                   className="w-full"
                   required
@@ -280,7 +280,7 @@ const ListTripPage: React.FC = () => {
                     type="text"
                     value={aadhaarPhone}
                     onChange={e => setAadhaarPhone(e.target.value)}
-                    className="border px-4 py-2 rounded mt-2 w-64 text-center"
+                    className="border px-4 py-2 rounded mt-2 w-64 text-center dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
                     placeholder="Enter phone number or email"
                     required
                   />
@@ -303,7 +303,7 @@ const ListTripPage: React.FC = () => {
                         type="text"
                         value={otp}
                         onChange={e => setOtp(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-700 dark:text-white"
                         maxLength={6}
                         required
                       />

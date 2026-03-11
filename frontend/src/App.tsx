@@ -109,6 +109,7 @@ function App() {
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/help" element={<HelpCenterPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/mytrips" element={<MyTripsPage />} />
                 <Route path="/myparcel" element={<MyParcelPage />} />

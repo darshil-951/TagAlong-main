@@ -1,15 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
-import { Mail, Phone, User, Edit, LogOut, ShieldCheck, MapPin, Calendar, Package, Plane, Settings, Camera } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
+import { Mail, Phone, User, Edit, LogOut, ShieldCheck, MapPin, Calendar, Package, Plane, Settings, Camera, MessageSquare } from 'lucide-react';
 import { getApiEndpoint, getUploadUrl } from '../utils/api';
 import { gsap } from 'gsap';
 
 const ProfilePage: React.FC = () => {
   const { currentUser, setCurrentUser, logout } = useAuth();
+  const { userId } = useParams<{ userId: string }>();
+  const [displayUser, setDisplayUser] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
+
+  const isOwnProfile = !userId || (currentUser && currentUser._id === userId) || (currentUser && currentUser.id === userId);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -26,7 +33,35 @@ const ProfilePage: React.FC = () => {
         { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, delay: 0.3, ease: 'power3.out' }
       );
     }
-  }, []);
+    
+    // Fetch user profile if viewing someone else
+    const fetchUserProfile = async () => {
+      if (!isOwnProfile && userId) {
+        setLoading(true);
+        try {
+          const res = await fetch(getApiEndpoint(`/api/users/${userId}`), {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('tagalong-token')}`
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setDisplayUser(data);
+          } else {
+            setError('User not found');
+          }
+        } catch (err) {
+          setError('Failed to load profile');
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setDisplayUser(currentUser);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [userId, currentUser, isOwnProfile]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentUser) return;
@@ -56,12 +91,23 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  if (!currentUser) {
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 pt-20"><div className="text-gray-500">Loading profile...</div></div>;
+  }
+  
+  if (error) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 pt-20"><div className="text-red-500 bg-red-100 p-4 rounded-lg">{error}</div></div>;
+  }
+
+  // Fallback to avoid null check errors if the fetch is slow or user isn't logged in
+  const activeUser = displayUser || currentUser;
+
+  if (!activeUser) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="bg-white/90 dark:bg-gray-800/90 shadow-2xl rounded-3xl p-10 text-center border border-teal-100 dark:border-gray-700">
           <User className="mx-auto h-16 w-16 text-gray-300 dark:text-gray-600 mb-4" />
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">You need to log in to view your profile.</p>
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">Profile not found or you need to log in.</p>
           <Link
             to="/login"
             className="inline-block bg-gradient-to-r from-teal-500 to-blue-500 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:from-teal-600 hover:to-blue-600 transition"
@@ -73,8 +119,8 @@ const ProfilePage: React.FC = () => {
     );
   }
 
-  const avatarSrc = avatarPreview || (currentUser.avatar ? currentUser.avatar : getUploadUrl(`/uploads/avatars/${currentUser.id}.jpg`));
-  const memberSince = currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+  const avatarSrc = avatarPreview || (activeUser.avatar ? activeUser.avatar : getUploadUrl(`/uploads/avatars/${activeUser._id || activeUser.id}.jpg`));
+  const memberSince = activeUser.createdAt ? new Date(activeUser.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pt-24 pb-16 px-4 sm:px-6 lg:px-8">
@@ -98,20 +144,22 @@ const ProfilePage: React.FC = () => {
               <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-teal-400 to-blue-500 opacity-60 blur group-hover:opacity-80 transition-opacity" />
               <img
                 src={avatarSrc}
-                alt={currentUser.name}
+                alt={activeUser.name}
                 className="relative w-36 h-36 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-xl"
               />
-              {/* Camera overlay on hover */}
-              <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-                <Camera size={28} className="text-white" />
-              </label>
-              {currentUser.isVerified && (
+              {/* Camera overlay on hover - ONLY FOR OWN PROFILE */}
+              {isOwnProfile && (
+                <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                  <Camera size={28} className="text-white" />
+                </label>
+              )}
+              {activeUser.isVerified && (
                 <span className="absolute bottom-1 right-1 bg-teal-500 text-white rounded-full p-1.5 shadow-lg border-2 border-white dark:border-gray-800" title="Verified User">
                   <ShieldCheck size={18} />
                 </span>
@@ -119,29 +167,41 @@ const ProfilePage: React.FC = () => {
             </div>
 
             {/* Name & Role */}
-            <h1 className="mt-4 text-3xl font-extrabold text-gray-900 dark:text-white">{currentUser.name}</h1>
+            <h1 className="mt-4 text-3xl font-extrabold text-gray-900 dark:text-white">{activeUser.name}</h1>
             <span className="mt-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-teal-100 to-blue-100 dark:from-teal-900/50 dark:to-blue-900/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-700">
               <ShieldCheck size={14} />
-              {currentUser.role || 'Member'}
+              {activeUser.role || 'Member'}
             </span>
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3 mt-6 mb-8 justify-center">
-              <Link
-                to="/settings"
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-xl font-medium shadow-lg hover:from-teal-600 hover:to-blue-600 hover:shadow-xl transition-all duration-200"
-              >
-                <Settings size={18} />
-                Edit Profile
-              </Link>
-              <button
-                onClick={logout}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium shadow hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
-              >
-                <LogOut size={18} />
-                Sign Out
-              </button>
-            </div>
+            {/* Action Buttons - ONLY FOR OWN PROFILE */}
+            {isOwnProfile ? (
+              <div className="flex flex-wrap gap-3 mt-6 mb-8 justify-center">
+                <Link
+                  to="/settings"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-xl font-medium shadow-lg hover:from-teal-600 hover:to-blue-600 hover:shadow-xl transition-all duration-200"
+                >
+                  <Settings size={18} />
+                  Edit Profile
+                </Link>
+                <button
+                  onClick={logout}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium shadow hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
+                >
+                  <LogOut size={18} />
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-3 mt-6 mb-8 justify-center">
+                <Link
+                  to={`/messages?id=${activeUser._id || activeUser.id}`}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-xl font-medium shadow-lg hover:from-teal-600 hover:to-blue-600 hover:shadow-xl transition-all duration-200"
+                >
+                  <MessageSquare size={18} className="mr-1" />
+                  Message
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
@@ -160,8 +220,8 @@ const ProfilePage: React.FC = () => {
                 <Mail size={18} className="text-teal-500 flex-shrink-0 mt-0.5" />
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email</p>
-                  <p className="text-gray-900 dark:text-gray-100 font-medium truncate" title={currentUser.email}>
-                    {currentUser.email}
+                  <p className="text-gray-900 dark:text-gray-100 font-medium" title={activeUser.email}>
+                    {activeUser.email}
                   </p>
                 </div>
               </div>
@@ -170,7 +230,7 @@ const ProfilePage: React.FC = () => {
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Phone</p>
                   <p className="text-gray-900 dark:text-gray-100 font-medium">
-                    {currentUser.phone || 'Not provided'}
+                    {activeUser.phone || 'Not provided'}
                   </p>
                 </div>
               </div>
@@ -194,44 +254,52 @@ const ProfilePage: React.FC = () => {
               </div>
               Quick Actions
             </h3>
-            <div className="space-y-2">
-              <Link
-                to="/mytrips"
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition-colors group"
-              >
-                <div className="p-2 rounded-lg bg-teal-100 dark:bg-teal-900/50 group-hover:bg-teal-200 dark:group-hover:bg-teal-800/50 transition-colors">
-                  <Plane size={18} className="text-teal-600 dark:text-teal-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">My Trips</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">View and manage your trips</p>
-                </div>
-              </Link>
-              <Link
-                to="/myparcel"
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors group"
-              >
-                <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/50 transition-colors">
-                  <Package size={18} className="text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">My Parcels</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Track your shipments</p>
-                </div>
-              </Link>
-              <Link
-                to="/settings"
-                className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
-              >
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
-                  <Settings size={18} className="text-gray-600 dark:text-gray-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">Settings</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Account preferences & security</p>
-                </div>
-              </Link>
-            </div>
+            {isOwnProfile && (
+              <div className="space-y-2">
+                <Link
+                  to="/mytrips"
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50 dark:hover:bg-gray-700 transition-colors group"
+                >
+                  <div className="p-2 rounded-lg bg-teal-100 dark:bg-teal-900/50 group-hover:bg-teal-200 dark:group-hover:bg-teal-800/50 transition-colors">
+                    <Plane size={18} className="text-teal-600 dark:text-teal-400" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">My Trips</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">View and manage your trips</p>
+                  </div>
+                </Link>
+                <Link
+                  to="/myparcel"
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors group"
+                >
+                  <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/50 transition-colors">
+                    <Package size={18} className="text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">My Parcels</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Track your shipments</p>
+                  </div>
+                </Link>
+                <Link
+                  to="/settings"
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
+                >
+                  <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
+                    <Settings size={18} className="text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">Settings</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Account preferences & security</p>
+                  </div>
+                </Link>
+              </div>
+            )}
+            {!isOwnProfile && (
+              <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                <ShieldCheck size={48} className="mx-auto text-teal-200 dark:text-teal-900/40 mb-3" />
+                <p>Private user details are hidden. Send a message to coordinate with them securely.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

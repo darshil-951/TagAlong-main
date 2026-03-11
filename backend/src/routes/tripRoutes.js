@@ -3,7 +3,8 @@ const router = express.Router();
 const tripController = require('../controllers/tripController');
 const authenticate = require('../middlewares/auth');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/aadhaar/' }); // temp storage
+// Use disk storage specifically for Tesseract.js compatibility. It crashes on Memory Buffers.
+const upload = multer({ dest: 'uploads/aadhaar/' });
 
 // OCR Aadhaar
 router.post('/ocr/aadhaar', upload.single('aadhaar'), tripController.aadhaarOcr);

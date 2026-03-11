@@ -122,12 +122,14 @@ const HomePage: React.FC = () => {
           >
             Find Trips
           </Link>
-          <Link
-            to="/signup"
-            className="px-8 py-3 rounded-xl font-semibold text-teal-600 dark:text-teal-400 bg-white dark:bg-gray-800 border border-teal-400 dark:border-teal-600 shadow hover:bg-teal-50 dark:hover:bg-gray-700 transition-all text-lg"
-          >
-            Join Now
-          </Link>
+          {!isAuthenticated && (
+            <Link
+              to="/signup"
+              className="px-8 py-3 rounded-xl font-semibold text-teal-600 dark:text-teal-400 bg-white dark:bg-gray-800 border border-teal-400 dark:border-teal-600 shadow hover:bg-teal-50 dark:hover:bg-gray-700 transition-all text-lg"
+            >
+              Join Now
+            </Link>
+          )}
         </div>
         <div className="absolute left-0 top-0 w-full h-80 opacity-10 pointer-events-none -z-10">
           <svg viewBox="0 0 1440 320" className="w-full h-full">

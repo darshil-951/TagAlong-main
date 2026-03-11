@@ -10,6 +10,8 @@ const parcelRequestSchema = new mongoose.Schema({
   status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
   paymentStatus: { type: String, enum: ['unpaid', 'processing', 'paid'], default: 'unpaid' },
   price: { type: Number }
+}, {
+  timestamps: true
 });
 
 module.exports = mongoose.model('ParcelRequest', parcelRequestSchema);

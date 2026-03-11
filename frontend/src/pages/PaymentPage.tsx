@@ -201,11 +201,11 @@ const PaymentPage: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Payment Details</h2>
               <p className="text-gray-600 dark:text-gray-400">Secure payment processing by Stripe</p>
             </div>
-            <div className="text-2xl font-bold text-teal-600">₹{parcelData.amount / 2}</div>
+            <div className="text-2xl font-bold text-teal-600">₹{parcelData.amount}</div>
           </div>
 
           <Elements stripe={stripePromise}>
-            <CheckoutForm parcelId={parcelData.parcelId} amount={parcelData.amount / 2} />
+            <CheckoutForm parcelId={parcelData.parcelId} amount={parcelData.amount} />
           </Elements>
         </div>
 

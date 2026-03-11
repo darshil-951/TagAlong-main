@@ -49,8 +49,8 @@ exports.createPaymentIntent = async (req, res) => {
       return res.status(503).json({ message: 'Payment service is not configured. Please contact support.' });
     }
 
-    // Calculate amount based on trip price and parcel weight
-    const amount = parcel.trip.price * parcel.weight;
+    // Use exact amount based on trip price
+    const amount = parcel.trip.price;
 
     // Create a payment intent with Stripe (INR currency, amount in paise)
     const paymentIntent = await stripe.paymentIntents.create({
