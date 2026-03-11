@@ -1,7 +1,8 @@
 const Trip = require('../models/Trip');
 const path = require('path');
 const fs = require('fs');
-const tesseract = require('tesseract.js'); // npm install tesseract.js
+const os = require('os');
+const tesseract = require('tesseract.js');
 const crypto = require('crypto');
 
 // In-memory OTP store (for demo; use Redis or DB for production)
@@ -14,9 +15,13 @@ exports.aadhaarOcr = async (req, res) => {
 
     // Validate that the uploaded file is an image
     if (req.file.mimetype === 'application/pdf' || !req.file.mimetype.startsWith('image/')) {
-      if (req.file.path) fs.unlinkSync(req.file.path);
       return res.status(400).json({ error: 'PDF files are not supported for OCR directly. Please upload a clear image (JPG, PNG).' });
     }
+
+    // Write buffer to OS temp directory (ephemeral, no project-level writes needed)
+    const ext = path.extname(req.file.originalname) || '.jpg';
+    const tmpFilePath = path.join(os.tmpdir(), `aadhaar_${Date.now()}${ext}`);
+    fs.writeFileSync(tmpFilePath, req.file.buffer);
 
     let text = '';
     let worker;
@@ -28,7 +33,7 @@ exports.aadhaarOcr = async (req, res) => {
         tessjs_create_hocr: '0',
         tessjs_create_tsv: '0',
       });
-      const result = await worker.recognize(req.file.path);
+      const result = await worker.recognize(tmpFilePath);
       text = result.data.text;
       console.log('OCR TEXT (Optimized Digits):', text);
     } catch (ocrErr) {
@@ -36,8 +41,9 @@ exports.aadhaarOcr = async (req, res) => {
       text = 'Aadhaar: 234567890123 Phone: 9876543210 Name: Test User';
     } finally {
       if (worker) await worker.terminate();
-      if (req.file && req.file.path && fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
+      // Always clean up the temp file
+      if (fs.existsSync(tmpFilePath)) {
+        fs.unlinkSync(tmpFilePath);
       }
     }
 

@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { bufferToDataUri } = require('../utils/cloudUpload');
 
 // Example feature flag
 const isFeatureEnabled = process.env.FEATURE_FLAG_UPDATE_EMAIL === 'true';
@@ -31,9 +32,9 @@ exports.getUserById = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    // Ensure avatar is a full URL
-    if (user.avatar && !user.avatar.startsWith('http')) {
-      user.avatar = `${req.protocol}://${req.get('host')}/uploads/avatars${user.avatar}`;
+    // Clear old local avatar URLs that no longer resolve after cloud migration
+    if (user.avatar && user.avatar.includes('/uploads/')) {
+      user.avatar = null;
     }
     res.json(user);
   } catch (err) {
@@ -49,13 +50,15 @@ exports.uploadAvatar = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    // Update user's avatar in DB
-    const avatarUrl = `${req.protocol}://${req.get('host')}/uploads/avatars/${req.file.filename}`;
+    
+    // Convert to base64 data URI (stored directly in MongoDB, no external service needed)
+    const avatarUrl = bufferToDataUri(req.file.buffer, req.file.mimetype);
+    
     const updatedUser = await User.findByIdAndUpdate(
-      req.user._id || req.user.id || req.user.userId, // Support both _id and id
+      req.user._id || req.user.id || req.user.userId,
       { avatar: avatarUrl },
       { new: true }
-    ).select('-password'); // Exclude password
+    ).select('-password');
 
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found' });
@@ -63,6 +66,7 @@ exports.uploadAvatar = async (req, res) => {
 
     res.json({ avatarUrl, user: updatedUser });
   } catch (err) {
+    console.error('Avatar upload error:', err);
     res.status(500).json({ error: 'Failed to upload avatar' });
   }
 };

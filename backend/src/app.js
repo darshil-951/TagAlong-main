@@ -63,7 +63,6 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Socket.IO connection handling
 const connectedUsers = new Map();

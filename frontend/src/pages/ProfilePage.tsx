@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useParams } from 'react-router-dom';
-import { Mail, Phone, User, Edit, LogOut, ShieldCheck, MapPin, Calendar, Package, Plane, Settings, Camera, MessageSquare } from 'lucide-react';
-import { getApiEndpoint, getUploadUrl } from '../utils/api';
+import { Mail, Phone, User, LogOut, ShieldCheck, MapPin, Calendar, Package, Plane, Settings, Camera, MessageSquare } from 'lucide-react';
+import { getApiEndpoint } from '../utils/api';
+import { getAvatarSrc } from '../utils/avatar';
 import { gsap } from 'gsap';
 
 const ProfilePage: React.FC = () => {
@@ -119,7 +120,7 @@ const ProfilePage: React.FC = () => {
     );
   }
 
-  const avatarSrc = avatarPreview || (activeUser.avatar ? activeUser.avatar : getUploadUrl(`/uploads/avatars/${activeUser._id || activeUser.id}.jpg`));
+  const avatarSrc = avatarPreview || getAvatarSrc(activeUser.avatar, activeUser.name);
   const memberSince = activeUser.createdAt ? new Date(activeUser.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
 
   return (

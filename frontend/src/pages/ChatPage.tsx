@@ -3,8 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { Chat, Message as MessageType } from '../types';
-import { Send, Image, MapPin, ArrowLeft, Phone, Video, MoreVertical, Search, MessageSquare, UserCheck } from 'lucide-react';
+import { Send, Image, MapPin, ArrowLeft, Search, MessageSquare, UserCheck } from 'lucide-react';
 import gsap from 'gsap';
+import { getAvatarSrc } from '../utils/avatar';
 
 const ChatPage: React.FC = () => {
   const {
@@ -95,23 +96,11 @@ const ChatPage: React.FC = () => {
   //   }
   // }, [messages, activeChat]);
 
-  // Track if the current user just sent a message
-  const [justSentMessage, setJustSentMessage] = useState(false);
-
-  // Scroll to bottom only when the current user sends a message
-  // useEffect(() => {
-  //   if (messagesEndRef.current && justSentMessage) {
-  //     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  //     setJustSentMessage(false);
-  //   }
-  // }, [justSentMessage]);
-
   const handleSendMessage = () => {
     if (!messageInput.trim() || !activeChat || !currentUser) return;
 
     sendMessage(activeChat, messageInput, 'text');
     setMessageInput('');
-    setJustSentMessage(true); // Set flag when user sends a message
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -307,7 +296,7 @@ const ChatPage: React.FC = () => {
                       <div className="flex items-start">
                         <div className="relative">
                           <img
-                            src={chat.user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(chat.user?.name || 'User')}&background=0D8ABC&color=fff`}
+                            src={getAvatarSrc(chat.user?.avatar, chat.user?.name)}
                             alt={chat.user?.name}
                             className="w-12 h-12 rounded-full object-cover"
                           />
@@ -367,7 +356,7 @@ const ChatPage: React.FC = () => {
                         <div className="flex items-center">
                           <div className="relative">
                             <img
-                              src={activeUserChat.user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(activeUserChat.user?.name || 'User')}&background=0D8ABC&color=fff`}
+                              src={getAvatarSrc(activeUserChat.user?.avatar, activeUserChat.user?.name)}
                               alt={activeUserChat.user?.name}
                               className="w-10 h-10 rounded-full object-cover"
                             />
@@ -432,7 +421,7 @@ const ChatPage: React.FC = () => {
                                   const senderChat = chats.find(chat => chat.user?._id === message.senderId);
                                   return (
                                     <img
-                                      src={senderChat?.user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(senderChat?.user?.name || 'User')}&background=0D8ABC&color=fff`}
+                                      src={getAvatarSrc(senderChat?.user?.avatar, senderChat?.user?.name)}
                                       alt={senderChat?.user?.name || 'User'}
                                       className="w-8 h-8 rounded-full object-cover"
                                     />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { AuthProvider } from './context/AuthContext';
@@ -16,8 +16,7 @@ import TermsPage from './pages/TermsPage';
 import HelpCenterPage from './pages/HelpCenterPage';
 import { LoginPage, SignupPage } from './pages/AuthPages';
 import ListTripPage from './pages/ListTripPage';
-import { mockMessages } from './data/mockData';
-import { Message } from './types';
+
 import SettingsPage from './pages/SettingsPage';
 import MyParcelPage from './pages/MyParcelPage';
 import MyTripsPage from './pages/MyTripsPage';
@@ -39,56 +38,6 @@ function App() {
       nullTargetWarn: false,
     });
   }, []);
-
-  const handleSendMessage = (
-    content: string,
-    type: Message['type'],
-    metadata?: Message['metadata']
-  ) => {
-    // Implement your message sending logic here
-    // For demo, you can just log or update state
-    console.log('Send message:', { content, type, metadata });
-  };
-  const handleTypingStart = () => { };
-  const handleTypingEnd = () => { };
-
-  // Initialize selectedUserId from localStorage or default to empty string
-  const [selectedUserId, setSelectedUserId] = useState(() => {
-    const savedChat = localStorage.getItem('tagalong-selected-chat');
-    if (savedChat) {
-      try {
-        const parsed = JSON.parse(savedChat);
-        return parsed.partnerId;
-      } catch (e) {
-        console.error('Error parsing saved chat:', e);
-      }
-    }
-    return '';
-  });
-
-  // Update selectedUserId when localStorage changes
-  // Update the storage event listener to handle changes from other tabs
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'tagalong-selected-chat') {
-        const savedChat = event.newValue;
-        if (savedChat) {
-          try {
-            const parsed = JSON.parse(savedChat);
-            setSelectedUserId(parsed.partnerId);
-          } catch (e) {
-            console.error('Error parsing saved chat:', e);
-          }
-        }
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-  const filteredMessages = mockMessages.filter(msg =>
-    (msg.senderId === selectedUserId || msg.receiverId === selectedUserId)
-  );
 
   return (
     <ThemeProvider>
@@ -117,7 +66,6 @@ function App() {
                 <Route path="/messages" element={<ChatPage />} />
                 <Route path="/notifications" element={<Notification />} />
                 <Route path="/admin" element={<AdminDashboard />} />
-              // Add this route in your Routes component (around line 100)
                 <Route path="/admin-login" element={<AdminLoginPage />} />
                 <Route path="/debug-user" element={<DebugUserPage />} />
               </Routes>

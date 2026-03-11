@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
 import { MapPin, Calendar, Package, Star, Clock, IndianRupee } from 'lucide-react';
-import { Listing, User } from '../types';
+import { Listing } from '../types';
+import { getAvatarSrc } from '../utils/avatar';
 
 
 interface ListingCardProps {
@@ -27,9 +28,6 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, onSendParcel }) => {
   const departureDate = formatDate(listing.departureDate);
   const departureTime = formatTime(listing.departureDate);
 
-  function setShowVerification(arg0: boolean): void {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
@@ -76,7 +74,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, onSendParcel }) => {
             </div>
             <div className="flex flex-col items-center">
               <img
-                src={user.avatar}
+                src={getAvatarSrc(user.avatar, user.name)}
                 alt={user.name}
                 className="w-12 h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600"
               />

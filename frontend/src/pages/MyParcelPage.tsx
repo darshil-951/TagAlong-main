@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Message, User } from '../types';
-import { getApiEndpoint, getUploadUrl } from '../utils/api';
+import { getApiEndpoint } from '../utils/api';
+import { getAvatarSrc } from '../utils/avatar';
 
 interface Parcel {
   _id: string;
@@ -24,10 +24,6 @@ const MyParcelPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const parcelsPerPage = 5;
-  const [selectedParcel, setSelectedParcel] = useState<Parcel | null>(null);
-  const [showChat, setShowChat] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [chatPartnerId, setChatPartnerId] = useState<string>('');
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -63,26 +59,6 @@ const MyParcelPage: React.FC = () => {
     fetchParcels();
   }, []);
 
-  // Handle opening chat
-  const handleOpenChat = async (parcel: Parcel) => {
-    if (!currentUser) return;
-
-    setSelectedParcel(parcel);
-
-    // Determine chat partner (if current user is sender, chat with carrier, and vice versa)
-    const partnerId = currentUser._id === parcel.sender._id
-      ? parcel.carrier._id
-      : parcel.sender._id;
-
-    setChatPartnerId(partnerId);
-
-    try {
-      // Fetch chat history
-      setShowChat(true);
-    } catch (error) {
-      console.error('Failed to fetch chat history:', error);
-    }
-  };
 
   // Handle sending a message
   const handleChatClick = (parcel: Parcel) => {
@@ -96,32 +72,13 @@ const MyParcelPage: React.FC = () => {
     // Get partner details
     const chatPartner = currentUser._id === parcel.sender._id ? parcel.carrier : parcel.sender;
 
-    // Create a proper User object for the chat partner
-    const chatPartnerUser: User = {
-      _id: partnerId,
-      id: partnerId,
-      name: chatPartner.name,
-      avatar: chatPartner.avatar || getUploadUrl(`/uploads/avatars/${partnerId}.jpg`),
-      verificationStatus: chatPartner.verificationStatus,
-      onlineStatus: 'online',
-      lastSeen: new Date().toISOString(),
-      // Add missing required properties
-      role: 'user',
-      createdAt: new Date().toISOString(),
-      email: '',
-      phone: '',
-      isVerified: false,
-      verificationDocuments: [],
-      rating: 0,
-      reviews: []
-    };
 
 
     // Store the selected chat partner in localStorage for persistence
     localStorage.setItem('tagalong-selected-chat', JSON.stringify({
       partnerId,
       partnerName: chatPartner.name,
-      partnerAvatar: chatPartner.avatar || getUploadUrl(`/uploads/avatars/${partnerId}.jpg`),
+      partnerAvatar: getAvatarSrc(chatPartner.avatar, chatPartner.name),
       partnerVerificationStatus: chatPartner.verificationStatus || 'unverified',
       partnerOnlineStatus: 'offline',
       partnerLastSeen: new Date().toISOString()

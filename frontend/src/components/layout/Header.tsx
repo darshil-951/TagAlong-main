@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { MessageSquare, Bell, Menu, X, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import logo from '../../images/logo.png';
-import { useChat } from '../../context/ChatContext';
+
 import { getApiEndpoint } from '../../utils/api';
+import { getAvatarSrc } from '../../utils/avatar';
 import { useTheme } from '../../context/ThemeContext';
 
 const Header: React.FC = () => {
@@ -12,23 +13,8 @@ const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { refreshChats } = useChat(); // Add this line
-  const navigate = useNavigate();
   const [notificationCount, setNotificationCount] = useState(0);
   const { isDark, toggleTheme } = useTheme();
-  const handleMessagesClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (refreshChats) {
-      refreshChats().then(() => {
-        navigate('/messages');
-      }).catch(err => {
-        console.error('Failed to refresh chats:', err);
-        navigate('/messages'); // Navigate anyway
-      });
-    } else {
-      navigate('/messages');
-    }
-  };
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -164,7 +150,7 @@ const Header: React.FC = () => {
                 <div className="relative group">
                   <button className="flex items-center space-x-2 focus:outline-none">
                     <img
-                      src={currentUser?.avatar}
+                      src={getAvatarSrc(currentUser?.avatar, currentUser?.name)}
                       alt={currentUser?.name}
                       className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-700"
                     />
@@ -270,7 +256,7 @@ const Header: React.FC = () => {
                 <div className="flex items-center px-4">
                   <div className="flex-shrink-0">
                     <img
-                      src={currentUser?.avatar}
+                      src={getAvatarSrc(currentUser?.avatar, currentUser?.name)}
                       alt={currentUser?.name}
                       className="h-10 w-10 rounded-full object-cover"
                     />
